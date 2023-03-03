@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17
+FROM eclipse-temurin:17-alpine
 
 COPY --chown=185 build/quarkus-app/lib/ /deployments/lib/
 COPY --chown=185 build/quarkus-app/*.jar /deployments/
