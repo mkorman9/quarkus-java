@@ -5,4 +5,4 @@ COPY --chown=185 build/quarkus-app/*.jar /deployments/
 COPY --chown=185 build/quarkus-app/app/ /deployments/app/
 COPY --chown=185 build/quarkus-app/quarkus/ /deployments/quarkus/
 
-CMD [ "java", "-jar", "/deployments/quarkus-run.jar"]
+CMD [ "java", "-jar", "/deployments/quarkus-run.jar" ]
