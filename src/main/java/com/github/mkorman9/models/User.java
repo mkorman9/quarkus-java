@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.security.Principal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 @Table(name="users")
 @Data
 @NoArgsConstructor
-public class User {
+public class User implements Principal {
     @Id
     @GenericGenerator(
             name = "userIdGenerator",
