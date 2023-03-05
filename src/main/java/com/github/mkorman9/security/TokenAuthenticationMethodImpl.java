@@ -26,14 +26,14 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
         UUID userId = maybeUserId.get();
 
         Uni<User> userUni = Uni.createFrom().deferred(() ->
-            Uni.createFrom().emitter(uniEmitter -> {
-                ExecutorRecorder.getCurrent().execute(() -> {
-                    resolveUser(userId).ifPresentOrElse(
-                            uniEmitter::complete,
-                            () -> uniEmitter.fail(new IllegalArgumentException())
-                    );
-                });
-            })
+            Uni.createFrom().emitter(uniEmitter ->
+                    ExecutorRecorder.getCurrent().execute(() ->
+                        resolveUser(userId).ifPresentOrElse(
+                                uniEmitter::complete,
+                                () -> uniEmitter.fail(new IllegalArgumentException())
+                        )
+                    )
+            )
         );
 
         return userUni.onItem().transform(this::createSecurityContext);
