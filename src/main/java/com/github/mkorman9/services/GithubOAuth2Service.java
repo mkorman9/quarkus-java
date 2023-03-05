@@ -37,7 +37,8 @@ public class GithubOAuth2Service {
             @ConfigProperty(name="oauth2.github.clientSecret") String clientSecret,
             @ConfigProperty(name="oauth2.github.redirectUrl") String redirectUrl,
             OAuth2StateService stateService,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper
+    ) {
         this.service = new ServiceBuilder(clientId)
                 .apiSecret(clientSecret)
                 .callback(redirectUrl)
