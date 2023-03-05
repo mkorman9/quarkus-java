@@ -1,4 +1,4 @@
-package com.github.mkorman9.resources.oauth2;
+package com.github.mkorman9.services.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

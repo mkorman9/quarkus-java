@@ -1,7 +1,7 @@
 package com.github.mkorman9.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.mkorman9.resources.oauth2.GithubUserInfoResponse;
+import com.github.mkorman9.services.dto.GithubUserInfoResponse;
 import com.github.scribejava.apis.GitHubApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.exceptions.OAuthException;
