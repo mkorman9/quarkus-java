@@ -40,7 +40,8 @@ public class UserResource {
     @Path("{name}")
     @Authenticated
     public String addUser(@RestPath String name) {
-        LOG.info("{} has added new user: {}", securityContext.getUserPrincipal().getName(), name);
+        var executiveUser = (User) securityContext.getUserPrincipal();
+        LOG.info("{} has added new user: {}", executiveUser.getName(), name);
 
         userService.addUser(name);
         return "OK";
