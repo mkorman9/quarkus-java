@@ -22,10 +22,12 @@ public class TokenAuthenticationInterceptor {
             return Uni.createFrom().voidItem();
         }
 
-        return tokenAuthenticationMethod.authenticate(maybeToken.get()).map(maybeSecurityContext -> {
-            maybeSecurityContext.ifPresent(context::setSecurityContext);
-            return null;
-        });
+        return tokenAuthenticationMethod.authenticate(maybeToken.get()).
+                map(securityContext -> {
+                    context.setSecurityContext(securityContext);
+                    return null;
+                })
+                .onFailure().recoverWithNull().replaceWithVoid();
     }
 
     private Optional<String> extractToken(ContainerRequestContext context) {

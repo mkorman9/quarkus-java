@@ -18,10 +18,10 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
     UserService userService;
 
     @Override
-    public Uni<Optional<SecurityContext>> authenticate(String token) {
+    public Uni<SecurityContext> authenticate(String token) {
         var maybeUserId = convertTokenToUUID(token);
         if (maybeUserId.isEmpty()) {
-            return Uni.createFrom().item(Optional::empty);
+            return Uni.createFrom().failure(new IllegalArgumentException());
         }
         UUID userId = maybeUserId.get();
 
@@ -37,9 +37,7 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
             })
         );
 
-        return userUni.
-                onItem().transform((user) -> Optional.of(createSecurityContext(user))).
-                onFailure().recoverWithItem(Optional::empty);
+        return userUni.onItem().transform(this::createSecurityContext);
     }
 
     private SecurityContext createSecurityContext(User user) {
