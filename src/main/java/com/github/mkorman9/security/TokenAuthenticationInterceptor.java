@@ -22,8 +22,8 @@ public class TokenAuthenticationInterceptor {
             return Uni.createFrom().voidItem();
         }
 
-        return tokenAuthenticationMethod.authenticate(maybeToken.get()).
-                map(securityContext -> {
+        return tokenAuthenticationMethod.authenticate(maybeToken.get())
+                .map(securityContext -> {
                     context.setSecurityContext(securityContext);
                     return null;
                 })

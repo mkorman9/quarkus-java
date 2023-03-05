@@ -16,6 +16,6 @@ public class OAuth2StateService {
     }
 
     public boolean validateState(String state) {
-        return store.remove(state);
+        return store.remove(state) != null;
     }
 }
