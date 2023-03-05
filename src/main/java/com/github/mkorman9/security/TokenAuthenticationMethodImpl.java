@@ -28,8 +28,7 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
         Uni<User> userUni = Uni.createFrom().deferred(() ->
             Uni.createFrom().emitter(uniEmitter -> {
                 ExecutorRecorder.getCurrent().execute(() -> {
-                    var maybeUser = userService.getById(userId);
-                    maybeUser.ifPresentOrElse(
+                    resolveUser(userId).ifPresentOrElse(
                             uniEmitter::complete,
                             () -> uniEmitter.fail(new IllegalArgumentException())
                     );
@@ -38,6 +37,10 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
         );
 
         return userUni.onItem().transform(this::createSecurityContext);
+    }
+
+    private Optional<User> resolveUser(UUID userId) {
+        return userService.getById(userId);
     }
 
     private SecurityContext createSecurityContext(User user) {
