@@ -33,12 +33,12 @@ public class GithubOAuth2Service {
             @ConfigProperty(name="oauth2.github.redirectUrl") String redirectUrl,
             OAuth2StateService stateService,
             ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
         this.service = new ServiceBuilder(clientId)
                 .apiSecret(clientSecret)
                 .callback(redirectUrl)
                 .build(GitHubApi.instance());
         this.stateService = stateService;
+        this.objectMapper = objectMapper;
     }
 
     public String getAuthorizationUrl() {
