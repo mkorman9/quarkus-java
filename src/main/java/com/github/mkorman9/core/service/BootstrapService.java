@@ -1,4 +1,4 @@
-package com.github.mkorman9.services;
+package com.github.mkorman9.core.service;
 
 import io.quarkus.runtime.StartupEvent;
 import org.slf4j.Logger;

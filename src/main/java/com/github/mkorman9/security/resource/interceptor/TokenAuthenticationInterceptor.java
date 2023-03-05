@@ -1,4 +1,4 @@
-package com.github.mkorman9.security;
+package com.github.mkorman9.security.resource.interceptor;
 
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;

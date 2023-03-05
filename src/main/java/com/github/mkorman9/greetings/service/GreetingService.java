@@ -1,6 +1,6 @@
-package com.github.mkorman9.services;
+package com.github.mkorman9.greetings.service;
 
-import com.github.mkorman9.models.Greetings;
+import com.github.mkorman9.greetings.dto.Greetings;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;

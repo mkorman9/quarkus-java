@@ -1,4 +1,4 @@
-package com.github.mkorman9.resources;
+package com.github.mkorman9.greetings.resource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

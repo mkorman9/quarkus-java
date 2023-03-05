@@ -1,7 +1,7 @@
-package com.github.mkorman9.resources;
+package com.github.mkorman9.security.resource;
 
-import com.github.mkorman9.models.User;
-import com.github.mkorman9.services.UserService;
+import com.github.mkorman9.security.model.User;
+import com.github.mkorman9.security.service.UserService;
 import org.jboss.resteasy.reactive.RestPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

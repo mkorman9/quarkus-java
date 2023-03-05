@@ -1,6 +1,6 @@
-package com.github.mkorman9.services;
+package com.github.mkorman9.security.service;
 
-import com.github.mkorman9.models.User;
+import com.github.mkorman9.security.model.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;

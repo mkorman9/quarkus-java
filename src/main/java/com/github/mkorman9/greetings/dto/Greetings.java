@@ -1,4 +1,4 @@
-package com.github.mkorman9.models;
+package com.github.mkorman9.greetings.dto;
 
 import lombok.Builder;
 

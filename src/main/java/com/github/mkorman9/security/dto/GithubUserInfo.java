@@ -1,4 +1,4 @@
-package com.github.mkorman9.services.dto;
+package com.github.mkorman9.security.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

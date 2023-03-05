@@ -1,7 +1,7 @@
-package com.github.mkorman9.resources;
+package com.github.mkorman9.greetings.resource;
 
-import com.github.mkorman9.models.Greetings;
-import com.github.mkorman9.services.GreetingService;
+import com.github.mkorman9.greetings.dto.Greetings;
+import com.github.mkorman9.greetings.service.GreetingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

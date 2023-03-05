@@ -1,6 +1,6 @@
-package com.github.mkorman9.resources;
+package com.github.mkorman9.security.resource;
 
-import com.github.mkorman9.services.GithubOAuth2Service;
+import com.github.mkorman9.security.service.GithubOAuth2Service;
 import org.jboss.resteasy.reactive.RestQuery;
 
 import javax.inject.Inject;

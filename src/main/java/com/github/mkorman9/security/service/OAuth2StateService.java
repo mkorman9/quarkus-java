@@ -1,4 +1,4 @@
-package com.github.mkorman9.services;
+package com.github.mkorman9.security.service;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Map;
