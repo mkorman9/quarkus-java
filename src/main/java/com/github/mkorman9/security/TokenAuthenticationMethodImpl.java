@@ -2,11 +2,8 @@ package com.github.mkorman9.security;
 
 import com.github.mkorman9.models.User;
 import com.github.mkorman9.services.UserService;
+import io.quarkus.runtime.ExecutorRecorder;
 import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.vertx.UniHelper;
-import io.vertx.core.Future;
-import io.vertx.core.Vertx;
-import io.vertx.core.impl.NoStackTraceThrowable;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,9 +17,6 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
     @Inject
     UserService userService;
 
-    @Inject
-    Vertx vertx;
-
     @Override
     public Uni<Optional<SecurityContext>> authenticate(String token) {
         var maybeUserId = convertTokenToUUID(token);
@@ -31,11 +25,17 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
         }
         UUID userId = maybeUserId.get();
 
-        Future<User> userFuture = vertx.executeBlocking((promise) -> {
-            var maybeUser = userService.getById(userId);
-            maybeUser.ifPresentOrElse(promise::complete, () -> promise.fail(""));
-        });
-        Uni<User> userUni = UniHelper.toUni(userFuture);
+        Uni<User> userUni = Uni.createFrom().deferred(() ->
+            Uni.createFrom().emitter(uniEmitter -> {
+                ExecutorRecorder.getCurrent().execute(() -> {
+                    var maybeUser = userService.getById(userId);
+                    maybeUser.ifPresentOrElse(
+                            uniEmitter::complete,
+                            () -> uniEmitter.fail(new IllegalArgumentException())
+                    );
+                });
+            })
+        );
 
         return userUni.
                 onItem().transform((user) -> Optional.of(createSecurityContext(user))).

@@ -3,6 +3,7 @@ package com.github.mkorman9.services;
 import com.github.mkorman9.models.User;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -16,11 +17,13 @@ public class UserService {
     @Inject
     EntityManager entityManager;
 
+    @ActivateRequestContext
     public Optional<User> getById(UUID id) {
         var user = entityManager.find(User.class, id);
         return Optional.ofNullable(user);
     }
 
+    @ActivateRequestContext
     public List<User> getAllUsers() {
         return entityManager.createQuery("from User", User.class).getResultList();
     }
