@@ -4,6 +4,8 @@ import com.github.mkorman9.models.User;
 import com.github.mkorman9.services.UserService;
 import io.quarkus.runtime.ExecutorRecorder;
 import io.smallrye.mutiny.Uni;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -14,6 +16,8 @@ import java.util.UUID;
 
 @ApplicationScoped
 public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod {
+    private static final Logger LOG = LoggerFactory.getLogger(TokenAuthenticationMethodImpl.class);
+
     @Inject
     UserService userService;
 
@@ -40,7 +44,12 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
     }
 
     private Optional<User> resolveUser(UUID userId) {
-        return userService.getById(userId);
+        try {
+            return userService.getById(userId);
+        } catch (Exception e) {
+            LOG.error("Error while authenticating security token", e);
+            return Optional.empty();
+        }
     }
 
     private SecurityContext createSecurityContext(User user) {
