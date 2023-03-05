@@ -2,11 +2,11 @@ package com.github.mkorman9.resources;
 
 import com.github.mkorman9.models.User;
 import com.github.mkorman9.services.UserService;
-import io.quarkus.security.Authenticated;
 import org.jboss.resteasy.reactive.RestPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,7 +38,7 @@ public class UserResource {
 
     @POST
     @Path("{name}")
-    @Authenticated
+    @RolesAllowed({"ADMIN"})
     public String addUser(@RestPath String name) {
         var executiveUser = (User) securityContext.getUserPrincipal();
         LOG.info("{} has added new user: {}", executiveUser.getName(), name);

@@ -1,5 +1,7 @@
 package com.github.mkorman9.models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -7,7 +9,9 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.security.Principal;
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name="users")
@@ -28,4 +32,20 @@ public class User implements Principal {
 
     @Column(name="created_at")
     private Instant createdAt;
+
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private Set<UserRole> roles;
+
+    @JsonGetter("roles")
+    public Set<String> getRolesSet() {
+        return roles.stream().
+                map(UserRole::getRole).
+                collect(Collectors.toSet());
+    }
 }

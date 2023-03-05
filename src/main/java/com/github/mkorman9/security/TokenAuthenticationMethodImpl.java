@@ -44,6 +44,8 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
     }
 
     private SecurityContext createSecurityContext(User user) {
+        var userRoles = user.getRolesSet();
+
         return new SecurityContext() {
             @Override
             public Principal getUserPrincipal() {
@@ -52,7 +54,7 @@ public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod 
 
             @Override
             public boolean isUserInRole(String role) {
-                return false;
+                return userRoles.contains(role);
             }
 
             @Override
