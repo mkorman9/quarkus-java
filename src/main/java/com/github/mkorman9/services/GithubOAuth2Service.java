@@ -4,6 +4,8 @@ import com.github.scribejava.apis.GitHubApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.exceptions.OAuthException;
 import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -15,6 +17,8 @@ import java.util.concurrent.ExecutionException;
 
 @ApplicationScoped
 public class GithubOAuth2Service {
+    private static final String USER_INFO_URL = "https://api.github.com/user";
+
     private final OAuth20Service service;
     private final OAuth2StateService stateService;
 
@@ -47,6 +51,17 @@ public class GithubOAuth2Service {
             throw new RuntimeException(e);
         } catch (OAuthException e) {
             return Optional.empty();
+        }
+    }
+
+    public String resolveUserInfo(OAuth2AccessToken accessToken) {
+        var request = new OAuthRequest(Verb.GET, USER_INFO_URL);
+        service.signRequest(accessToken, request);
+
+        try (var response = service.execute(request)) {
+            return response.getBody();
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }
