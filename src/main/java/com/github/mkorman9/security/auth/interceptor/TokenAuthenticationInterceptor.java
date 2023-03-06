@@ -4,6 +4,7 @@ import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 
 import javax.inject.Inject;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,7 @@ public class TokenAuthenticationInterceptor {
     @Inject
     TokenAuthenticationMethod tokenAuthenticationMethod;
 
-    @ServerRequestFilter(preMatching = true)
+    @ServerRequestFilter(preMatching = true, priority = Priorities.AUTHORIZATION)
     public Uni<Void> intercept(ContainerRequestContext context) {
         var maybeToken = extractToken(context);
         if (maybeToken.isEmpty()) {
