@@ -1,10 +1,10 @@
-package com.github.mkorman9.security.service;
+package com.github.mkorman9.security.oauth2.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.mkorman9.security.dto.GithubUserEmailResponse;
-import com.github.mkorman9.security.dto.GithubUserInfo;
-import com.github.mkorman9.security.dto.GithubUserInfoResponse;
+import com.github.mkorman9.security.oauth2.dto.GithubUserEmailResponse;
+import com.github.mkorman9.security.oauth2.dto.GithubUserInfo;
+import com.github.mkorman9.security.oauth2.dto.GithubUserInfoResponse;
 import com.github.scribejava.apis.GitHubApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.exceptions.OAuthException;

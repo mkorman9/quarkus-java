@@ -1,4 +1,4 @@
-package com.github.mkorman9.security.dto;
+package com.github.mkorman9.security.oauth2.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

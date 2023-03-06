@@ -1,7 +1,7 @@
-package com.github.mkorman9.security.resource.interceptor;
+package com.github.mkorman9.security.auth.interceptor;
 
-import com.github.mkorman9.security.model.User;
-import com.github.mkorman9.security.service.UserService;
+import com.github.mkorman9.security.auth.model.User;
+import com.github.mkorman9.security.auth.service.UserService;
 import io.quarkus.runtime.ExecutorRecorder;
 import io.smallrye.mutiny.Uni;
 import org.slf4j.Logger;
