@@ -32,7 +32,7 @@ public class OAuth2Resource {
             @RestQuery String code,
             @RestQuery String state
     ) {
-        var maybeAccessToken = githubOAuth2Service.resolveAccessToken(code, state);
+        var maybeAccessToken = githubOAuth2Service.retrieveAccessToken(code, state);
         if (maybeAccessToken.isEmpty()) {
             return Response
                     .status(Response.Status.FORBIDDEN)
@@ -40,7 +40,7 @@ public class OAuth2Resource {
         }
 
         var accessToken = maybeAccessToken.get();
-        var userInfo = githubOAuth2Service.resolveUserInfo(accessToken);
+        var userInfo = githubOAuth2Service.retrieveUserInfo(accessToken);
 
         return Response
                 .ok(userInfo)

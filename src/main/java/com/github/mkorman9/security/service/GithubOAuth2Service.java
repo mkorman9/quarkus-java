@@ -54,7 +54,7 @@ public class GithubOAuth2Service {
                 .build();
     }
 
-    public Optional<OAuth2AccessToken> resolveAccessToken(String code, String state) {
+    public Optional<OAuth2AccessToken> retrieveAccessToken(String code, String state) {
         if (!stateService.validateState(state)) {
             return Optional.empty();
         }
@@ -68,9 +68,9 @@ public class GithubOAuth2Service {
         }
     }
 
-    public GithubUserInfo resolveUserInfo(OAuth2AccessToken accessToken) {
-        var userInfo = resolveUserInfoResponse(accessToken);
-        var userEmails = resolveUserEmailsResponse(accessToken);
+    public GithubUserInfo retrieveUserInfo(OAuth2AccessToken accessToken) {
+        var userInfo = retrieveUserInfoResponse(accessToken);
+        var userEmails = retrieveUserEmailResponses(accessToken);
         return GithubUserInfo.builder()
                 .id(userInfo.getId())
                 .login(userInfo.getLogin())
@@ -95,7 +95,7 @@ public class GithubOAuth2Service {
         return candidate;
     }
 
-    private GithubUserInfoResponse resolveUserInfoResponse(OAuth2AccessToken accessToken) {
+    private GithubUserInfoResponse retrieveUserInfoResponse(OAuth2AccessToken accessToken) {
         var request = new OAuthRequest(Verb.GET, USER_INFO_URL);
         service.signRequest(accessToken, request);
 
@@ -107,7 +107,7 @@ public class GithubOAuth2Service {
         }
     }
 
-    private List<GithubUserEmailResponse> resolveUserEmailsResponse(OAuth2AccessToken accessToken) {
+    private List<GithubUserEmailResponse> retrieveUserEmailResponses(OAuth2AccessToken accessToken) {
         var request = new OAuthRequest(Verb.GET, USER_EMAIL_URL);
         service.signRequest(accessToken, request);
 
