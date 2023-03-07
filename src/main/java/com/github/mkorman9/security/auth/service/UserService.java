@@ -24,6 +24,21 @@ public class UserService {
     }
 
     @Transactional
+    public List<User> getAllUsers() {
+        return entityManager.createQuery("from User", User.class).getResultList();
+    }
+
+    @Transactional
+    public User addUser(String name) {
+        var user = new User();
+        user.setName(name);
+        user.setCreatedAt(Instant.now());
+
+        entityManager.persist(user);
+        return user;
+    }
+
+    @Transactional
     public boolean assignRole(UUID id, String role) {
         var user = entityManager.find(User.class, id);
         if (user == null) {
@@ -37,20 +52,5 @@ public class UserService {
         entityManager.merge(user);
 
         return true;
-    }
-
-    @Transactional
-    public List<User> getAllUsers() {
-        return entityManager.createQuery("from User", User.class).getResultList();
-    }
-
-    @Transactional
-    public User addUser(String name) {
-        var user = new User();
-        user.setName(name);
-        user.setCreatedAt(Instant.now());
-
-        entityManager.persist(user);
-        return user;
     }
 }
