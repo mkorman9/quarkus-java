@@ -38,7 +38,7 @@ public class User implements Principal {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private Set<UserRole> roles;
 
