@@ -3,7 +3,6 @@ package com.github.mkorman9.security.auth.resource;
 import com.github.mkorman9.security.auth.dto.AssignRoleRequest;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.UserService;
-import io.smallrye.common.annotation.Blocking;
 import org.jboss.resteasy.reactive.RestPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
