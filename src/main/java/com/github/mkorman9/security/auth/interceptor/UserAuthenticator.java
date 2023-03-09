@@ -15,15 +15,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
-public class TokenAuthenticationMethodImpl implements TokenAuthenticationMethod {
-    private static final Logger LOG = LoggerFactory.getLogger(TokenAuthenticationMethodImpl.class);
+public class UserAuthenticator {
+    private static final Logger LOG = LoggerFactory.getLogger(UserAuthenticator.class);
 
     @Inject
     UserService userService;
 
-    @Override
-    public Uni<SecurityContext> authenticate(String token) {
-        var maybeUserId = convertTokenToUUID(token);
+    public Uni<SecurityContext> authenticate(String uid) {
+        var maybeUserId = convertTokenToUUID(uid);
         if (maybeUserId.isEmpty()) {
             return Uni.createFrom().failure(new IllegalArgumentException());
         }

@@ -1,5 +1,8 @@
 package com.github.mkorman9.security.auth.interceptor;
 
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.github.mkorman9.security.auth.service.JWTHelper;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 
@@ -13,8 +16,14 @@ public class TokenAuthenticationInterceptor {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String TOKEN_TYPE = "bearer";
 
+    private final JWTVerifier verifier;
+    private final UserAuthenticator userAuthenticator;
+
     @Inject
-    TokenAuthenticationMethod tokenAuthenticationMethod;
+    public TokenAuthenticationInterceptor(JWTHelper jwt, UserAuthenticator userAuthenticator) {
+        this.verifier = jwt.getVerification().build();
+        this.userAuthenticator = userAuthenticator;
+    }
 
     @ServerRequestFilter(preMatching = true, priority = Priorities.AUTHORIZATION)
     public Uni<Void> intercept(ContainerRequestContext context) {
@@ -23,12 +32,20 @@ public class TokenAuthenticationInterceptor {
             return Uni.createFrom().voidItem();
         }
 
-        return tokenAuthenticationMethod.authenticate(maybeToken.get())
-                .map(securityContext -> {
-                    context.setSecurityContext(securityContext);
-                    return null;
-                })
-                .onFailure().recoverWithNull().replaceWithVoid();
+        try {
+            var decodedToken = verifier.verify(maybeToken.get());
+            var uid = decodedToken.getClaim("uid").asString();
+
+            return userAuthenticator.authenticate(uid)
+                    .map((securityContext) -> {
+                        context.setSecurityContext(securityContext);
+                        return null;
+                    })
+                    .replaceWithVoid()
+                    .onFailure().recoverWithNull().replaceWithVoid();
+        } catch (JWTVerificationException e) {
+            return Uni.createFrom().voidItem();
+        }
     }
 
     private Optional<String> extractToken(ContainerRequestContext context) {
