@@ -22,7 +22,7 @@ public class UserAuthenticator {
     UserService userService;
 
     public Uni<SecurityContext> authenticate(String uid) {
-        var maybeUserId = convertTokenToUUID(uid);
+        var maybeUserId = convertToUUID(uid);
         if (maybeUserId.isEmpty()) {
             return Uni.createFrom().failure(new IllegalArgumentException());
         }
@@ -77,7 +77,7 @@ public class UserAuthenticator {
         };
     }
 
-    private static Optional<UUID> convertTokenToUUID(String token) {
+    private static Optional<UUID> convertToUUID(String token) {
         try {
             return Optional.of(UUID.fromString(token));
         } catch (Exception e) {
