@@ -46,7 +46,7 @@ public class UserAuthenticator {
         try {
             return userService.getById(userId);
         } catch (Exception e) {
-            LOG.error("Error while authenticating security token", e);
+            LOG.error("Error while authenticating user", e);
             return Optional.empty();
         }
     }
