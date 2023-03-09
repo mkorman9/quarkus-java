@@ -19,8 +19,8 @@ public class UserService {
 
     @Transactional
     public Optional<User> getById(UUID id) {
-        var user = entityManager.find(User.class, id);
-        return Optional.ofNullable(user);
+        var maybeUser = entityManager.find(User.class, id);
+        return Optional.ofNullable(maybeUser);
     }
 
     @Transactional
@@ -40,11 +40,12 @@ public class UserService {
 
     @Transactional
     public boolean assignRole(UUID id, String role) {
-        var user = entityManager.find(User.class, id);
-        if (user == null) {
+        var maybeUser = getById(id);
+        if (maybeUser.isEmpty()) {
             return false;
         }
 
+        var user = maybeUser.get();
         var roleEntity = new UserRole();
         roleEntity.setRole(role);
 
