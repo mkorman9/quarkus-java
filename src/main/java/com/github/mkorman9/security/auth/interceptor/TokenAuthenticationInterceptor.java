@@ -36,6 +36,10 @@ public class TokenAuthenticationInterceptor {
             var decodedToken = verifier.verify(maybeToken.get());
             var uid = decodedToken.getClaim("uid").asString();
 
+            if (uid == null) {
+                return Uni.createFrom().voidItem();
+            }
+
             return userAuthenticator.authenticate(uid)
                     .map((securityContext) -> {
                         context.setSecurityContext(securityContext);
