@@ -15,6 +15,7 @@ public class SessionService {
 
     public String newToken(User user) {
         var token = JWT.create()
+                .withIssuer("quarkus-java")
                 .withClaim("uid", user.getId().toString())
                 .withIssuedAt(Instant.now())
                 .withExpiresAt(Instant.now().plus(Duration.ofHours(1)));
