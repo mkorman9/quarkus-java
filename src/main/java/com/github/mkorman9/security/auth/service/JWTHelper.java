@@ -17,7 +17,7 @@ public class JWTHelper {
     public JWTHelper(
             @ConfigProperty(name="jwt.secret") String secret
     ) {
-        this.algorithm = Algorithm.HMAC512(secret);
+        this.algorithm = Algorithm.HMAC256(secret);
     }
 
     public Verification getVerification() {
