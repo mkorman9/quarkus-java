@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public class TokenAuthenticationInterceptor {
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String TOKEN_TYPE = "bearer";
+    private static final String TOKEN_TYPE = "Bearer";
 
     private final JWTVerifier verifier;
     private final UserAuthenticator userAuthenticator;
