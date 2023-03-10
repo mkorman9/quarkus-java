@@ -53,9 +53,9 @@ public class TokenAuthenticationInterceptor {
     }
 
     private Optional<String> extractToken(ContainerRequestContext context) {
-        List<String> authHeaderValues = context.
-                getHeaders().
-                get(AUTHORIZATION_HEADER);
+        List<String> authHeaderValues = context
+                .getHeaders()
+                .get(AUTHORIZATION_HEADER);
         if (authHeaderValues == null || authHeaderValues.isEmpty()) {
             return Optional.empty();
         }
