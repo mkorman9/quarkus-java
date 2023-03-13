@@ -42,7 +42,7 @@ public class TokenAuthenticationInterceptor {
                 return Uni.createFrom().voidItem();
             }
 
-            return authorize(uid)
+            return authenticate(uid)
                     .map((securityContext) -> {
                         context.setSecurityContext(securityContext);
                         return null;
@@ -54,7 +54,7 @@ public class TokenAuthenticationInterceptor {
         }
     }
 
-    private Uni<SecurityContext> authorize(String uid) {
+    private Uni<SecurityContext> authenticate(String uid) {
         return Uni.createFrom().deferred(() ->
                 Uni.createFrom().emitter(uniEmitter ->
                         ExecutorRecorder.getCurrent().execute(() ->
