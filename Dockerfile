@@ -8,5 +8,6 @@ COPY --chown=9999 build/quarkus-app/app/ /deployments/app/
 COPY --chown=9999 build/quarkus-app/quarkus/ /deployments/quarkus/
 
 USER runner
+WORKDIR /
 
 CMD [ "java", "-jar", "/deployments/quarkus-run.jar" ]
