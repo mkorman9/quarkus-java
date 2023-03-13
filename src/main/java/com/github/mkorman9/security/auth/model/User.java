@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -39,6 +40,7 @@ public class User implements Principal {
             orphanRemoval = true
     )
     @JoinColumn(name = "user_id", nullable = false)
+    @BatchSize(size=10)
     @JsonIgnore
     private Set<UserRole> roles;
 
