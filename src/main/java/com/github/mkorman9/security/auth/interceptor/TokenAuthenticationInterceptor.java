@@ -3,12 +3,14 @@ package com.github.mkorman9.security.auth.interceptor;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.github.mkorman9.security.auth.service.JWTHelper;
+import io.quarkus.runtime.ExecutorRecorder;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 
 import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +42,7 @@ public class TokenAuthenticationInterceptor {
                 return Uni.createFrom().voidItem();
             }
 
-            return userAuthenticator.authenticate(uid)
+            return authorize(uid)
                     .map((securityContext) -> {
                         context.setSecurityContext(securityContext);
                         return null;
@@ -50,6 +52,19 @@ public class TokenAuthenticationInterceptor {
         } catch (JWTVerificationException e) {
             return Uni.createFrom().voidItem();
         }
+    }
+
+    private Uni<SecurityContext> authorize(String uid) {
+        return Uni.createFrom().deferred(() ->
+                Uni.createFrom().emitter(uniEmitter ->
+                        ExecutorRecorder.getCurrent().execute(() ->
+                                userAuthenticator.authenticate(uid).ifPresentOrElse(
+                                        uniEmitter::complete,
+                                        () -> uniEmitter.fail(new IllegalArgumentException())
+                                )
+                        )
+                )
+        );
     }
 
     private Optional<String> extractToken(ContainerRequestContext context) {

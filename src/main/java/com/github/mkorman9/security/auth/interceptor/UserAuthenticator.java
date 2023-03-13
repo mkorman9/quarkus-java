@@ -2,8 +2,6 @@ package com.github.mkorman9.security.auth.interceptor;
 
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.UserService;
-import io.quarkus.runtime.ExecutorRecorder;
-import io.smallrye.mutiny.Uni;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,25 +19,14 @@ public class UserAuthenticator {
     @Inject
     UserService userService;
 
-    public Uni<SecurityContext> authenticate(String uid) {
-        var maybeUserId = convertToUUID(uid);
-        if (maybeUserId.isEmpty()) {
-            return Uni.createFrom().failure(new IllegalArgumentException());
+    public Optional<SecurityContext> authenticate(String uid) {
+        try {
+            var userId = UUID.fromString(uid);
+            return resolveUser(userId)
+                    .map(this::createSecurityContext);
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
         }
-        UUID userId = maybeUserId.get();
-
-        Uni<User> userUni = Uni.createFrom().deferred(() ->
-            Uni.createFrom().emitter(uniEmitter ->
-                    ExecutorRecorder.getCurrent().execute(() ->
-                        resolveUser(userId).ifPresentOrElse(
-                                uniEmitter::complete,
-                                () -> uniEmitter.fail(new IllegalArgumentException())
-                        )
-                    )
-            )
-        );
-
-        return userUni.onItem().transform(this::createSecurityContext);
     }
 
     private Optional<User> resolveUser(UUID userId) {
@@ -75,13 +62,5 @@ public class UserAuthenticator {
                 return SecurityContext.DIGEST_AUTH;
             }
         };
-    }
-
-    private static Optional<UUID> convertToUUID(String token) {
-        try {
-            return Optional.of(UUID.fromString(token));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
     }
 }
