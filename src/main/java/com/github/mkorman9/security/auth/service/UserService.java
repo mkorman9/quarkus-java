@@ -1,6 +1,7 @@
 package com.github.mkorman9.security.auth.service;
 
 import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
+import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.model.UserRole;
 import org.hibernate.exception.ConstraintViolationException;
@@ -42,10 +43,10 @@ public class UserService {
     }
 
     @Transactional
-    public boolean assignRole(UUID id, String role) {
+    public void assignRole(UUID id, String role) {
         var maybeUser = getById(id);
         if (maybeUser.isEmpty()) {
-            return false;
+            throw new UserNotFoundException();
         }
 
         var user = maybeUser.get();
@@ -63,7 +64,5 @@ public class UserService {
                 }
             }
         }
-
-        return true;
     }
 }

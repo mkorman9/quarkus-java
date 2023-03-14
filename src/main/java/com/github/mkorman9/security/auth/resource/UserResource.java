@@ -2,6 +2,7 @@ package com.github.mkorman9.security.auth.resource;
 
 import com.github.mkorman9.security.auth.dto.AssignRoleRequest;
 import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
+import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.SessionService;
 import com.github.mkorman9.security.auth.service.UserService;
@@ -51,9 +52,9 @@ public class UserResource {
     @RolesAllowed({"ADMIN"})
     public UUID addUser(@RestPath String name) {
         var executiveUser = (User) securityContext.getUserPrincipal();
-        LOG.info("{} has added new user: {}", executiveUser.getName(), name);
 
         var user = userService.addUser(name);
+        LOG.info("{} has added new user: {}", executiveUser.getName(), name);
         return user.getId();
     }
 
@@ -62,15 +63,14 @@ public class UserResource {
     @RolesAllowed({"ADMIN"})
     public Response assignRole(@RestPath UUID id, @Valid @NotNull AssignRoleRequest request) {
         var executiveUser = (User) securityContext.getUserPrincipal();
-        LOG.info("{} has added new role {} to user: {}", executiveUser.getName(), request.getRole(), id);
 
         try {
-            var modified = userService.assignRole(id, request.getRole());
-            if (!modified) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
+            userService.assignRole(id, request.getRole());
+            LOG.info("{} has added new role {} to user: {}", executiveUser.getName(), request.getRole(), id);
 
             return Response.ok().build();
+        } catch (UserNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (RoleAlreadyAssignedException e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
