@@ -12,6 +12,8 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class UserRole {
+    public static final String UNIQUE_CONSTRAINT = "user_roles_unique";
+
     @Id
     @GenericGenerator(
             name = "userRoleIdGenerator",

@@ -1,11 +1,14 @@
 package com.github.mkorman9.security.auth.service;
 
+import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.model.UserRole;
+import org.hibernate.exception.ConstraintViolationException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
@@ -48,9 +51,18 @@ public class UserService {
         var user = maybeUser.get();
         var roleEntity = new UserRole();
         roleEntity.setRole(role);
-
         user.getRoles().add(roleEntity);
-        entityManager.merge(user);
+
+        try {
+            entityManager.merge(user);
+            entityManager.flush();
+        } catch (PersistenceException e) {
+            if (e.getCause() instanceof ConstraintViolationException violation) {
+                if (violation.getConstraintName().equals(UserRole.UNIQUE_CONSTRAINT)) {
+                    throw new RoleAlreadyAssignedException();
+                }
+            }
+        }
 
         return true;
     }

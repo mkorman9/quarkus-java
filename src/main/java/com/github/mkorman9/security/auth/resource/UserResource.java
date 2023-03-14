@@ -1,6 +1,7 @@
 package com.github.mkorman9.security.auth.resource;
 
 import com.github.mkorman9.security.auth.dto.AssignRoleRequest;
+import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.SessionService;
 import com.github.mkorman9.security.auth.service.UserService;
@@ -63,12 +64,16 @@ public class UserResource {
         var executiveUser = (User) securityContext.getUserPrincipal();
         LOG.info("{} has added new role {} to user: {}", executiveUser.getName(), request.getRole(), id);
 
-        var modified = userService.assignRole(id, request.getRole());
-        if (!modified) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        try {
+            var modified = userService.assignRole(id, request.getRole());
+            if (!modified) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
 
-        return Response.ok().build();
+            return Response.ok().build();
+        } catch (RoleAlreadyAssignedException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
     @GET

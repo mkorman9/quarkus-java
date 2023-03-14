@@ -8,5 +8,6 @@ CREATE TABLE user_roles(
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL,
     role TEXT NOT NULL,
-    CONSTRAINT users_user_roles_fk FOREIGN KEY(user_id) REFERENCES users(id)
+    CONSTRAINT users_user_roles_fk FOREIGN KEY(user_id) REFERENCES users(id),
+    CONSTRAINT user_roles_unique UNIQUE(user_id, role)
 );
