@@ -63,6 +63,8 @@ public class UserService {
                     throw new RoleAlreadyAssignedException();
                 }
             }
+
+            throw e;
         }
     }
 }
