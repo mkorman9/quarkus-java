@@ -2,10 +2,8 @@ package com.github.mkorman9.security.auth.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name="user_roles")
@@ -15,13 +13,9 @@ public class UserRole {
     public static final String UNIQUE_CONSTRAINT = "user_roles_unique";
 
     @Id
-    @GenericGenerator(
-            name = "userRoleIdGenerator",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    @GeneratedValue(generator = "userRoleIdGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private UUID id;
+    private long id;
 
     @Column(name="role")
     private String role;
