@@ -12,6 +12,7 @@ import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
+import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -54,6 +55,7 @@ public class GithubOAuth2Service {
                 .build();
     }
 
+    @SneakyThrows
     public Optional<OAuth2AccessToken> retrieveAccessToken(String code, String state) {
         if (!stateService.validateState(state)) {
             return Optional.empty();
@@ -61,8 +63,6 @@ public class GithubOAuth2Service {
 
         try {
             return Optional.of(service.getAccessToken(code));
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
         } catch (OAuthException e) {
             return Optional.empty();
         }
