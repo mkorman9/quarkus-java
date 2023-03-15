@@ -46,8 +46,8 @@ public class User implements Principal {
 
     @JsonGetter("roles")
     public Set<String> getRolesSet() {
-        return roles.stream().
-                map(UserRole::getRole).
-                collect(Collectors.toSet());
+        return roles.stream()
+            .map(UserRole::getRole)
+            .collect(Collectors.toSet());
     }
 }
