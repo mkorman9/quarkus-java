@@ -43,7 +43,7 @@ public class TokenAuthenticationInterceptor {
             }
 
             return authenticate(uid)
-                    .map((securityContext) -> {
+                    .map(securityContext -> {
                         context.setSecurityContext(securityContext);
                         return null;
                     })
