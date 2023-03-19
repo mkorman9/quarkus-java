@@ -6,6 +6,7 @@ import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.SessionService;
 import com.github.mkorman9.security.auth.service.UserService;
+import io.smallrye.common.annotation.Blocking;
 import org.jboss.resteasy.reactive.RestPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -61,33 +63,28 @@ public class UserResource {
     @POST
     @Path("{id}/roles")
     @RolesAllowed({"ADMIN"})
-    public Response assignRole(@RestPath UUID id, @Valid @NotNull AssignRoleRequest request) {
+    @Blocking
+    public void assignRole(@RestPath UUID id, @Valid @NotNull AssignRoleRequest request) {
         var executiveUser = (User) securityContext.getUserPrincipal();
 
         try {
             userService.assignRole(id, request.getRole());
             LOG.info("{} has added new role {} to user: {}", executiveUser.getName(), request.getRole(), id);
-
-            return Response.ok().build();
         } catch (UserNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RoleAlreadyAssignedException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
 
     @GET
     @Path("{id}/token")
-    public Response getUserToken(@RestPath UUID id) {
+    public String getUserToken(@RestPath UUID id) {
         var maybeUser = userService.getById(id);
         if (maybeUser.isEmpty()) {
-            return Response.status(Response.Status.FORBIDDEN).build();
+            throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
 
-        var token = sessionService.newToken(maybeUser.get());
-
-        return Response.ok()
-                .entity(token)
-                .build();
+        return sessionService.newToken(maybeUser.get());
     }
 }
