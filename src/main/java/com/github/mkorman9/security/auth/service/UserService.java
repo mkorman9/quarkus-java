@@ -33,13 +33,9 @@ public class UserService {
     }
 
     @Transactional
-    public User addUser(String name) {
-        var user = new User();
-        user.setName(name);
+    public void addUser(User user) {
         user.setCreatedAt(Instant.now());
-
         entityManager.persist(user);
-        return user;
     }
 
     @Transactional

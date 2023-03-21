@@ -55,7 +55,10 @@ public class UserResource {
     public UUID addUser(@RestPath String name) {
         var executiveUser = (User) securityContext.getUserPrincipal();
 
-        var user = userService.addUser(name);
+        var user = new User();
+        user.setName(name);
+        userService.addUser(user);
+
         LOG.info("{} has added new user: {}", executiveUser.getName(), name);
         return user.getId();
     }
