@@ -1,13 +1,11 @@
-CREATE TABLE users(
+CREATE TABLE users (
     id         UUID PRIMARY KEY,
     name       TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL
 );
 
-CREATE SEQUENCE user_roles_id_seq;
-
-CREATE TABLE user_roles(
-    id      BIGINT DEFAULT nextval('user_roles_id_seq') PRIMARY KEY,
+CREATE TABLE user_roles (
+    id      BIGSERIAL PRIMARY KEY,
     user_id UUID NOT NULL,
     role    TEXT NOT NULL,
 
