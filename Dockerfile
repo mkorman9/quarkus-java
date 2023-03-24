@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 RUN adduser -u 9999 -D -H runner
 
