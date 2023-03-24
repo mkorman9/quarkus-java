@@ -29,20 +29,14 @@ import java.util.UUID;
 public class UserResource {
     private static final Logger LOG = LoggerFactory.getLogger(UserResource.class);
 
-    private final UserService userService;
-    private final SessionService sessionService;
-    private final SecurityContext securityContext;
+    @Inject
+    UserService userService;
 
     @Inject
-    public UserResource(
-            UserService userService,
-            SessionService sessionService,
-            @Context SecurityContext securityContext
-    ) {
-        this.userService = userService;
-        this.sessionService = sessionService;
-        this.securityContext = securityContext;
-    }
+    SessionService sessionService;
+
+    @Context
+    SecurityContext securityContext;
 
     @GET
     public List<User> getAllUsers() {
