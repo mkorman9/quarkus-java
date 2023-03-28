@@ -14,11 +14,12 @@ public class SessionService {
     JWTHelper jwt;
 
     public String newToken(User user) {
+        var now = Instant.now();
         var token = JWT.create()
                 .withIssuer("quarkus-java")
                 .withClaim("uid", user.getId().toString())
-                .withIssuedAt(Instant.now())
-                .withExpiresAt(Instant.now().plus(Duration.ofHours(1)));
+                .withIssuedAt(now)
+                .withExpiresAt(now.plus(Duration.ofHours(1)));
 
         return jwt.sign(token);
     }
