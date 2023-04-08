@@ -16,6 +16,7 @@ public class PostgresContainer implements QuarkusTestResourceLifecycleManager {
     @Override
     public Map<String, String> start() {
         db.start();
+
         return Maps.of(
                 "quarkus.datasource.jdbc.url", db.getJdbcUrl(),
                 "quarkus.datasource.username", db.getUsername(),
