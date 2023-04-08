@@ -60,6 +60,7 @@ task integrationTest(type: Test) {
     classpath = sourceSets.integrationTest.runtimeClasspath
 
     environment "TESTCONTAINERS_RYUK_DISABLED", "true"
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 }
 
 test {
