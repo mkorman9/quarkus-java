@@ -41,6 +41,14 @@ compileJava {
     options.compilerArgs << '-parameters'
 }
 
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
 sourceSets {
     integrationTest {
         java.srcDir "$projectDir/src/integrationTest/java"
@@ -55,18 +63,10 @@ configurations {
     integrationRuntime.extendsFrom testRuntime
 }
 
-task integrationTest(type: Test) {
+tasks.register('integrationTest', Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
 
     environment "TESTCONTAINERS_RYUK_DISABLED", "true"
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
-}
-
-test {
-    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
-}
-
-compileTestJava {
-    options.encoding = 'UTF-8'
 }
