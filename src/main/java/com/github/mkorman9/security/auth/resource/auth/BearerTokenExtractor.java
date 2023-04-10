@@ -1,7 +1,7 @@
 package com.github.mkorman9.security.auth.resource.auth;
 
+import javax.websocket.server.HandshakeRequest;
 import javax.ws.rs.container.ContainerRequestContext;
-import java.util.List;
 import java.util.Optional;
 
 public class BearerTokenExtractor {
@@ -9,15 +9,30 @@ public class BearerTokenExtractor {
     private static final String TOKEN_TYPE = "Bearer";
 
     public static Optional<String> extract(ContainerRequestContext context) {
-        List<String> authHeaderValues = context
+        var headerValue = context
                 .getHeaders()
-                .get(AUTHORIZATION_HEADER);
+                .getFirst(AUTHORIZATION_HEADER);
 
-        if (authHeaderValues == null || authHeaderValues.isEmpty()) {
+        if (headerValue == null) {
             return Optional.empty();
         }
 
-        var headerValue = authHeaderValues.get(0);
+        return extract(headerValue);
+    }
+
+    public static Optional<String> extract(HandshakeRequest handshakeRequest) {
+        var headerValues = handshakeRequest.getHeaders()
+                .get(AUTHORIZATION_HEADER);
+
+        if (headerValues == null || headerValues.isEmpty()) {
+            return Optional.empty();
+        }
+
+        var headerValue = headerValues.get(0);
+        return extract(headerValue);
+    }
+
+    private static Optional<String> extract(String headerValue) {
         var headerParts = headerValue.split("\\s+");
 
         if (headerParts.length != 2 || !headerParts[0].equalsIgnoreCase(TOKEN_TYPE)) {
