@@ -4,7 +4,7 @@ import com.github.mkorman9.security.auth.dto.AssignRoleRequest;
 import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
 import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import com.github.mkorman9.security.auth.model.User;
-import com.github.mkorman9.security.auth.service.SessionService;
+import com.github.mkorman9.security.auth.service.TokenService;
 import com.github.mkorman9.security.auth.service.UserService;
 import io.smallrye.common.annotation.Blocking;
 import org.jboss.resteasy.reactive.RestPath;
@@ -33,7 +33,7 @@ public class UserResource {
     UserService userService;
 
     @Inject
-    SessionService sessionService;
+    TokenService tokenService;
 
     @Context
     SecurityContext securityContext;
@@ -80,6 +80,7 @@ public class UserResource {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
 
-        return sessionService.newToken(maybeUser.get());
+        return tokenService.issueToken(maybeUser.get())
+                .getToken();
     }
 }
