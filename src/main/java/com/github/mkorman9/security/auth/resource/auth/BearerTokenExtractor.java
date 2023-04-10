@@ -1,6 +1,5 @@
 package com.github.mkorman9.security.auth.resource.auth;
 
-import javax.websocket.server.HandshakeRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.Optional;
 
@@ -17,18 +16,6 @@ public class BearerTokenExtractor {
             return Optional.empty();
         }
 
-        return extract(headerValue);
-    }
-
-    public static Optional<String> extract(HandshakeRequest handshakeRequest) {
-        var headerValues = handshakeRequest.getHeaders()
-                .get(AUTHORIZATION_HEADER);
-
-        if (headerValues == null || headerValues.isEmpty()) {
-            return Optional.empty();
-        }
-
-        var headerValue = headerValues.get(0);
         return extract(headerValue);
     }
 
