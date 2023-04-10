@@ -1,7 +1,6 @@
-package com.github.mkorman9.security.auth.interceptor;
+package com.github.mkorman9.security.auth.service;
 
 import com.github.mkorman9.security.auth.model.User;
-import com.github.mkorman9.security.auth.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +12,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
-public class UserAuthenticator {
-    private static final Logger LOG = LoggerFactory.getLogger(UserAuthenticator.class);
+public class UserAuthenticationService {
+    private static final Logger LOG = LoggerFactory.getLogger(UserAuthenticationService.class);
 
     @Inject
     UserService userService;
