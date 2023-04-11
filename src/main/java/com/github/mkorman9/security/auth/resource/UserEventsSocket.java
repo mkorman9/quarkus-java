@@ -65,8 +65,8 @@ public class UserEventsSocket {
 
     @ConsumeEvent(UserEvent.TOPIC_NAME)
     public void onUserEvent(UserEvent event) {
-        connections.values().forEach(s -> {
-            sendMessage(s, event);
+        connections.values().forEach(c -> {
+            sendMessage(c, event);
         });
     }
 
