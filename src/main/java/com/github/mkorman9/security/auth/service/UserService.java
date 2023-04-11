@@ -20,8 +20,6 @@ import java.util.UUID;
 
 @ApplicationScoped
 public class UserService {
-    public static final String USER_EVENTS_TOPIC = "userEvents";
-
     @Inject
     EntityManager entityManager;
 
@@ -46,7 +44,7 @@ public class UserService {
         user.setCreatedAt(Instant.now());
 
         entityManager.persist(user);
-        eventBus.publish(USER_EVENTS_TOPIC, new UserEvent(user.getId(), Instant.now(), UserEvent.EventType.CREATED));
+        eventBus.publish(UserEvent.TOPIC_NAME, new UserEvent(user.getId(), Instant.now(), UserEvent.EventType.CREATED));
 
         return user;
     }

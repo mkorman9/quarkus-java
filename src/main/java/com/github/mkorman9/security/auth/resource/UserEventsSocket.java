@@ -6,7 +6,6 @@ import com.github.mkorman9.security.auth.dto.UserEvent;
 import com.github.mkorman9.security.auth.dto.UserEventsSocketSession;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.TokenAuthenticationService;
-import com.github.mkorman9.security.auth.service.UserService;
 import io.quarkus.vertx.ConsumeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +63,7 @@ public class UserEventsSocket {
         LOG.info("{} sent message: {}", session.getId(), message);
     }
 
-    @ConsumeEvent(UserService.USER_EVENTS_TOPIC)
+    @ConsumeEvent(UserEvent.TOPIC_NAME)
     public void onUserEvent(UserEvent event) {
         sessions.values().forEach(s -> {
             sendMessage(s, event);

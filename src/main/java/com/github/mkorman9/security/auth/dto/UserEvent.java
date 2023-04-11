@@ -11,6 +11,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEvent {
+    public static final String TOPIC_NAME = "userEvents";
+
     private UUID userId;
 
     private Instant timestamp;
