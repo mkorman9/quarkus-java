@@ -1,9 +1,11 @@
 package com.github.mkorman9.security.auth.service;
 
+import com.github.mkorman9.security.auth.dto.UserEvent;
 import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
 import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.model.UserRole;
+import io.vertx.core.eventbus.EventBus;
 import org.hibernate.exception.ConstraintViolationException;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,8 +20,13 @@ import java.util.UUID;
 
 @ApplicationScoped
 public class UserService {
+    public static final String USER_EVENTS_TOPIC = "userEvents";
+
     @Inject
     EntityManager entityManager;
+
+    @Inject
+    EventBus eventBus;
 
     @Transactional
     public Optional<User> getById(UUID id) {
@@ -39,6 +46,8 @@ public class UserService {
         user.setCreatedAt(Instant.now());
 
         entityManager.persist(user);
+        eventBus.publish(USER_EVENTS_TOPIC, new UserEvent(user.getId(), Instant.now(), UserEvent.EventType.CREATED));
+
         return user;
     }
 
