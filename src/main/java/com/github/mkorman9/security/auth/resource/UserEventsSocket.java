@@ -3,7 +3,7 @@ package com.github.mkorman9.security.auth.resource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mkorman9.security.auth.dto.UserEvent;
-import com.github.mkorman9.security.auth.dto.UserEventsSocketSession;
+import com.github.mkorman9.security.auth.dto.UserEventsSocketConnection;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.TokenAuthenticationService;
 import io.quarkus.vertx.ConsumeEvent;
@@ -30,7 +30,7 @@ public class UserEventsSocket {
     @Inject
     ObjectMapper objectMapper;
 
-    private final ConcurrentHashMap<String, UserEventsSocketSession> sessions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, UserEventsSocketConnection> connections = new ConcurrentHashMap<>();
 
     @OnOpen
     public void onOpen(Session session) throws IOException {
@@ -41,14 +41,14 @@ public class UserEventsSocket {
         }
 
         var user = maybeUser.get();
-        sessions.put(session.getId(), new UserEventsSocketSession(session, user));
+        connections.put(session.getId(), new UserEventsSocketConnection(session, user));
 
         LOG.info("{} connected as {}", user.getName(), session.getId());
     }
 
     @OnClose
     public void onClose(Session session) {
-        sessions.remove(session.getId());
+        connections.remove(session.getId());
 
         LOG.info("{} disconnected", session.getId());
     }
@@ -65,7 +65,7 @@ public class UserEventsSocket {
 
     @ConsumeEvent(UserEvent.TOPIC_NAME)
     public void onUserEvent(UserEvent event) {
-        sessions.values().forEach(s -> {
+        connections.values().forEach(s -> {
             sendMessage(s, event);
         });
     }
@@ -80,9 +80,9 @@ public class UserEventsSocket {
                 .map(securityContext -> (User) securityContext.getUserPrincipal());
     }
 
-    private void sendMessage(UserEventsSocketSession session, Object message) {
+    private void sendMessage(UserEventsSocketConnection connection, Object message) {
         try {
-            session.getSession()
+            connection.getSession()
                     .getAsyncRemote()
                     .sendText(objectMapper.writeValueAsString(message));
         } catch (JsonProcessingException e) {

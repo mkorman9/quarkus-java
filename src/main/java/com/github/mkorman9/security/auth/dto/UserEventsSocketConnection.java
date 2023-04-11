@@ -8,7 +8,8 @@ import javax.websocket.Session;
 
 @Data
 @AllArgsConstructor
-public class UserEventsSocketSession {
+public class UserEventsSocketConnection {
     private Session session;
+
     private User user;
 }
