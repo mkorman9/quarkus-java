@@ -54,11 +54,7 @@ public class UserEventsSocket {
             return Optional.empty();
         }
 
-        var maybeSecurityContext = tokenAuthenticationService.authenticate(bearerTokenValues.get(0));
-        if (maybeSecurityContext.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of((User) maybeSecurityContext.get().getUserPrincipal());
+        return tokenAuthenticationService.authenticate(bearerTokenValues.get(0))
+                .map(securityContext -> (User) securityContext.getUserPrincipal());
     }
 }
