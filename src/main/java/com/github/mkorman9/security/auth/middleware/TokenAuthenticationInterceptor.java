@@ -1,4 +1,4 @@
-package com.github.mkorman9.security.auth.resource.auth;
+package com.github.mkorman9.security.auth.middleware;
 
 import com.github.mkorman9.security.auth.service.TokenAuthenticationService;
 import io.smallrye.mutiny.Uni;

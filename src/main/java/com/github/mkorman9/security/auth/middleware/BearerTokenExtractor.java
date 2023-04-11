@@ -1,4 +1,4 @@
-package com.github.mkorman9.security.auth.resource.auth;
+package com.github.mkorman9.security.auth.middleware;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import java.util.Optional;
