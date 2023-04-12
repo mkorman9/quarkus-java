@@ -7,6 +7,7 @@ import com.github.mkorman9.security.auth.dto.UserEventsSocketConnection;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.TokenAuthenticationService;
 import io.quarkus.vertx.ConsumeEvent;
+import io.smallrye.mutiny.Uni;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +16,8 @@ import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
 @ServerEndpoint(value = "/user/events")
 @ApplicationScoped
@@ -33,17 +34,22 @@ public class UserEventsSocket {
     private final ConcurrentHashMap<String, UserEventsSocketConnection> connections = new ConcurrentHashMap<>();
 
     @OnOpen
-    public void onOpen(Session session) throws IOException {
-        var maybeUser = authenticateUser(session);
-        if (maybeUser.isEmpty()) {
-            session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Not authorized"));
-            return;
-        }
+    public void onOpen(Session session) {
+        authenticateUser(session)
+                .onItem().ifNull().fail()
+                .onItem().ifNotNull().invoke(user -> {
+                    connections.put(session.getId(), new UserEventsSocketConnection(session, user));
 
-        var user = maybeUser.get();
-        connections.put(session.getId(), new UserEventsSocketConnection(session, user));
-
-        LOG.info("{} connected as {}", user.getName(), session.getId());
+                    LOG.info("{} connected as {}", user.getName(), session.getId());
+                })
+                .replaceWithVoid()
+                .onFailure().invoke(() -> {
+                    try {
+                        session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Not authorized"));
+                    } catch (IOException ignored) {
+                    }
+                })
+                .subscribe().with(v -> {}, e -> {});
     }
 
     @OnClose
@@ -70,10 +76,10 @@ public class UserEventsSocket {
         });
     }
 
-    private Optional<User> authenticateUser(Session session) {
+    private Uni<User> authenticateUser(Session session) {
         var bearerTokenValues = session.getRequestParameterMap().get(TOKEN_URL_PARAM);
         if (bearerTokenValues == null || bearerTokenValues.isEmpty()) {
-            return Optional.empty();
+            return Uni.createFrom().nullItem();
         }
 
         return tokenAuthenticationService.authenticate(bearerTokenValues.get(0))

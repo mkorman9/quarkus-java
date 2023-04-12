@@ -12,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 public class Token {
     @Id
-    @Column(name="token")
+    @Column(name="token", columnDefinition="text")
     private String token;
 
     @ManyToOne

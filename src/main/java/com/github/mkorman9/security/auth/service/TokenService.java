@@ -2,16 +2,14 @@ package com.github.mkorman9.security.auth.service;
 
 import com.github.mkorman9.security.auth.model.Token;
 import com.github.mkorman9.security.auth.model.User;
+import io.smallrye.mutiny.Uni;
 import lombok.SneakyThrows;
+import org.hibernate.reactive.mutiny.Mutiny;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Optional;
 
 @ApplicationScoped
 public class TokenService {
@@ -19,7 +17,7 @@ public class TokenService {
     private static final int TOKEN_LENGTH = 48;
 
     @Inject
-    EntityManager entityManager;
+    Mutiny.SessionFactory sessionFactory;
 
     private final SecureRandom random;
 
@@ -28,31 +26,27 @@ public class TokenService {
         random = SecureRandom.getInstanceStrong();
     }
 
-    @Transactional
-    public Optional<Token> findToken(String token) {
-        try {
-            var result = entityManager
+    public Uni<Token> findToken(String token) {
+        return sessionFactory.withTransaction(session -> {
+            return session
                     .createQuery("from Token t where t.token = :token and t.isValid = true", Token.class)
                     .setParameter("token", token)
-                    .getSingleResult();
-
-            return Optional.of(result);
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
+                    .getSingleResultOrNull();
+        });
     }
 
-    @Transactional
-    public Token issueToken(User owner) {
+    public Uni<Token> issueToken(User owner) {
         var token = new Token();
         token.setToken(generateToken());
         token.setUser(owner);
         token.setIssuedAt(Instant.now());
         token.setValid(true);
 
-        entityManager.persist(token);
-
-        return token;
+        return sessionFactory
+                .withTransaction(session -> {
+                    return session.persist(token);
+                })
+                .map(v -> token);
     }
 
     private String generateToken() {

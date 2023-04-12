@@ -28,7 +28,7 @@ public class User implements Principal {
     @Column(name="id")
     private UUID id;
 
-    @Column(name="name")
+    @Column(name="name", columnDefinition="text")
     private String name;
 
     @Column(name="created_at")

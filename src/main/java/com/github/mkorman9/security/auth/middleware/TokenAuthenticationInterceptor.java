@@ -19,7 +19,7 @@ public class TokenAuthenticationInterceptor {
             return Uni.createFrom().voidItem();
         }
 
-        return tokenAuthenticationService.authenticateAsync(maybeToken.get())
+        return tokenAuthenticationService.authenticate(maybeToken.get())
                 .map(securityContext -> {
                     context.setSecurityContext(securityContext);
                     return null;
