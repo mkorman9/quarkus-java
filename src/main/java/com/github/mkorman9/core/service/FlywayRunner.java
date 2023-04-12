@@ -8,7 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class FlywayRunner {
     @ConfigProperty(name = "flyway.migrate")
-    boolean doMigrate;
+    boolean isMigrate;
     @ConfigProperty(name = "quarkus.datasource.reactive.url")
     String url;
     @ConfigProperty(name = "quarkus.datasource.username")
@@ -17,7 +17,7 @@ public class FlywayRunner {
     String password;
 
     public void migrate() {
-        if (doMigrate) {
+        if (isMigrate) {
             Flyway.configure()
                     .dataSource(url.replace("vertx-reactive", "jdbc"), username, password)
                     .load()

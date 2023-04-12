@@ -19,31 +19,25 @@ public class TestDataService {
 
     public void injectTestData() {
         sessionFactory
-                .withTransaction(session -> {
+                .withTransaction((session) -> {
                     return session.find(User.class, ADMIN_USER_ID)
                             .onItem().transformToUni(user -> {
                                 if (user != null) {
                                     return Uni.createFrom().nullItem().replaceWithVoid();
                                 }
 
-                                return insertUser(session)
-                                        .flatMap(v -> insertUserRole(session));
+                                return session.createNativeQuery("INSERT INTO users(id, name, created_at) VALUES (:id, :name, NOW())")
+                                        .setParameter("id", ADMIN_USER_ID)
+                                        .setParameter("name", ADMIN_USER_NAME)
+                                        .executeUpdate()
+                                        .flatMap(v -> {
+                                            return session.createNativeQuery("INSERT INTO user_roles(user_id, role) VALUES (:user_id, :role)")
+                                                    .setParameter("user_id", ADMIN_USER_ID)
+                                                    .setParameter("role", ADMIN_USER_ROLE)
+                                                    .executeUpdate();
+                                        });
                             });
                 })
                 .subscribe().with(v -> {}, e -> {});
-    }
-
-    private Uni<Integer> insertUser(Mutiny.Session session) {
-        return session.createNativeQuery("INSERT INTO users(id, name, created_at) VALUES (:id, :name, NOW())")
-                .setParameter("id", ADMIN_USER_ID)
-                .setParameter("name", ADMIN_USER_NAME)
-                .executeUpdate();
-    }
-
-    private Uni<Integer> insertUserRole(Mutiny.Session session) {
-        return session.createNativeQuery("INSERT INTO user_roles(user_id, role) VALUES (:user_id, :role)")
-                .setParameter("user_id", ADMIN_USER_ID)
-                .setParameter("role", ADMIN_USER_ROLE)
-                .executeUpdate();
     }
 }
