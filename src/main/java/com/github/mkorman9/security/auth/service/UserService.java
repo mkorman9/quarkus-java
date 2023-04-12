@@ -57,8 +57,7 @@ public class UserService {
     public Uni<Void> assignRole(UUID id, String role) {
         return getById(id)
                 .onItem().ifNull().failWith(new UserNotFoundException())
-                .onItem().ifNotNull()
-                .transformToUni(user -> {
+                .onItem().ifNotNull().transformToUni(user -> {
                     var roleEntity = new UserRole();
                     roleEntity.setRole(role);
                     user.getRoles().add(roleEntity);
@@ -68,8 +67,7 @@ public class UserService {
                                 .flatMap(v -> session.flush());
                     });
                 })
-                .onFailure()
-                .transform(e -> {
+                .onFailure().transform(e -> {
                     if (e.getCause() instanceof ConstraintViolationException violation) {
                         if (violation.getConstraintName().equals(UserRole.UNIQUE_CONSTRAINT)) {
                             return new RoleAlreadyAssignedException();

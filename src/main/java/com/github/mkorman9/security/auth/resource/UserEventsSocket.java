@@ -4,8 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mkorman9.security.auth.dto.UserEvent;
 import com.github.mkorman9.security.auth.dto.UserEventsSocketConnection;
+import com.github.mkorman9.security.auth.model.Token;
 import com.github.mkorman9.security.auth.model.User;
-import com.github.mkorman9.security.auth.service.TokenAuthenticationService;
+import com.github.mkorman9.security.auth.service.TokenService;
 import io.quarkus.vertx.ConsumeEvent;
 import io.smallrye.mutiny.Uni;
 import org.slf4j.Logger;
@@ -17,7 +18,6 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 
 @ServerEndpoint(value = "/user/events")
 @ApplicationScoped
@@ -26,7 +26,7 @@ public class UserEventsSocket {
     private static final String TOKEN_URL_PARAM = "token";
 
     @Inject
-    TokenAuthenticationService tokenAuthenticationService;
+    TokenService tokenService;
 
     @Inject
     ObjectMapper objectMapper;
@@ -82,8 +82,8 @@ public class UserEventsSocket {
             return Uni.createFrom().nullItem();
         }
 
-        return tokenAuthenticationService.authenticate(bearerTokenValues.get(0))
-                .map(securityContext -> (User) securityContext.getUserPrincipal());
+        return tokenService.findToken(bearerTokenValues.get(0))
+                .map(Token::getUser);
     }
 
     private void sendMessage(UserEventsSocketConnection connection, Object message) {
