@@ -14,15 +14,10 @@ public class BootstrapService {
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapService.class);
 
     @Inject
-    FlywayRunner flywayRunner;
-
-    @Inject
     TestDataService testDataService;
 
     public void startup(@Observes StartupEvent startupEvent) {
         LOG.info("Starting up");
-
-        flywayRunner.migrate();
 
         if (LaunchMode.current() == LaunchMode.DEVELOPMENT) {
             LOG.warn("Using Test Data");

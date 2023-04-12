@@ -2,14 +2,16 @@ package com.github.mkorman9.security.auth.service;
 
 import com.github.mkorman9.security.auth.model.Token;
 import com.github.mkorman9.security.auth.model.User;
-import io.smallrye.mutiny.Uni;
 import lombok.SneakyThrows;
-import org.hibernate.reactive.mutiny.Mutiny;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.transaction.Transactional;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.Optional;
 
 @ApplicationScoped
 public class TokenService {
@@ -17,7 +19,7 @@ public class TokenService {
     private static final int TOKEN_LENGTH = 48;
 
     @Inject
-    Mutiny.SessionFactory sessionFactory;
+    EntityManager entityManager;
 
     private final SecureRandom random;
 
@@ -26,27 +28,31 @@ public class TokenService {
         random = SecureRandom.getInstanceStrong();
     }
 
-    public Uni<Token> findToken(String token) {
-        return sessionFactory.withTransaction(session -> {
-            return session
+    @Transactional
+    public Optional<Token> findToken(String token) {
+        try {
+            var result = entityManager
                     .createQuery("from Token t where t.token = :token and t.isValid = true", Token.class)
                     .setParameter("token", token)
-                    .getSingleResultOrNull();
-        });
+                    .getSingleResult();
+
+            return Optional.of(result);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
-    public Uni<Token> issueToken(User owner) {
+    @Transactional
+    public Token issueToken(User owner) {
         var token = new Token();
         token.setToken(generateToken());
         token.setUser(owner);
         token.setIssuedAt(Instant.now());
         token.setValid(true);
 
-        return sessionFactory
-                .withTransaction(session -> {
-                    return session.persist(token);
-                })
-                .map(v -> token);
+        entityManager.persist(token);
+
+        return token;
     }
 
     private String generateToken() {

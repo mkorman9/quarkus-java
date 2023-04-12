@@ -3,11 +3,10 @@ package com.github.mkorman9.security.auth.resource;
 import com.github.mkorman9.security.auth.dto.AssignRoleRequest;
 import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
 import com.github.mkorman9.security.auth.exception.UserNotFoundException;
-import com.github.mkorman9.security.auth.model.Token;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.TokenService;
 import com.github.mkorman9.security.auth.service.UserService;
-import io.smallrye.mutiny.Uni;
+import io.smallrye.common.annotation.Blocking;
 import org.jboss.resteasy.reactive.RestPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,52 +39,48 @@ public class UserResource {
     SecurityContext securityContext;
 
     @GET
-    public Uni<List<User>> getAllUsers() {
+    public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @POST
     @Path("{name}")
     @RolesAllowed({"ADMIN"})
-    public Uni<UUID> addUser(@RestPath String name) {
+    public UUID addUser(@RestPath String name) {
         var executiveUser = (User) securityContext.getUserPrincipal();
 
-        return userService.addUser(name)
-                .onItem().invoke(() -> {
-                    LOG.info("{} has added new user: {}", executiveUser.getName(), name);
-                })
-                .map(User::getId);
+        var user = userService.addUser(name);
+        LOG.info("{} has added new user: {}", executiveUser.getName(), name);
+
+        return user.getId();
     }
 
     @POST
     @Path("{id}/roles")
     @RolesAllowed({"ADMIN"})
-    public Uni<Void> assignRole(@RestPath UUID id, @Valid @NotNull AssignRoleRequest request) {
+    @Blocking
+    public void assignRole(@RestPath UUID id, @Valid @NotNull AssignRoleRequest request) {
         var executiveUser = (User) securityContext.getUserPrincipal();
 
-        return userService.assignRole(id, request.getRole())
-                .onItem().invoke(() -> {
-                    LOG.info("{} has added new role {} to user: {}", executiveUser.getName(), request.getRole(), id);
-                })
-                .onFailure().transform(e -> {
-                    if (e instanceof UserNotFoundException) {
-                        return new WebApplicationException(Response.Status.NOT_FOUND);
-                    } else if (e instanceof RoleAlreadyAssignedException) {
-                        return new WebApplicationException(Response.Status.BAD_REQUEST);
-                    }
-
-                    return e;
-                });
+        try {
+            userService.assignRole(id, request.getRole());
+            LOG.info("{} has added new role {} to user: {}", executiveUser.getName(), request.getRole(), id);
+        } catch (UserNotFoundException e) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        } catch (RoleAlreadyAssignedException e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
     }
 
     @GET
     @Path("{id}/token")
-    public Uni<String> getUserToken(@RestPath UUID id) {
-        return userService.getById(id)
-                .onItem().ifNull().failWith(new WebApplicationException(Response.Status.FORBIDDEN))
-                .onItem().ifNotNull().transformToUni(user -> {
-                    return tokenService.issueToken(user)
-                            .map(Token::getToken);
-                });
+    public String getUserToken(@RestPath UUID id) {
+        var maybeUser = userService.getById(id);
+        if (maybeUser.isEmpty()) {
+            throw new WebApplicationException(Response.Status.FORBIDDEN);
+        }
+
+        return tokenService.issueToken(maybeUser.get())
+                .getToken();
     }
 }
