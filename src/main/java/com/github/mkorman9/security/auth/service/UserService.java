@@ -44,7 +44,7 @@ public class UserService {
         user.setCreatedAt(Instant.now());
 
         entityManager.persist(user);
-        eventBus.publish(UserEvent.TOPIC_NAME, new UserEvent(user.getId(), Instant.now(), UserEvent.EventType.CREATED));
+        eventBus.publish(UserEvent.NAME, new UserEvent(user.getId(), Instant.now(), UserEvent.EventType.CREATED));
 
         return user;
     }

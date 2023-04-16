@@ -64,7 +64,7 @@ public class UserEventsSocket {
         LOG.info("{} sent message: {}", session.getId(), message);
     }
 
-    @ConsumeEvent(UserEvent.TOPIC_NAME)
+    @ConsumeEvent(UserEvent.NAME)
     public void onUserEvent(UserEvent event) {
         connections.values().forEach(c -> {
             sendMessage(c, event);

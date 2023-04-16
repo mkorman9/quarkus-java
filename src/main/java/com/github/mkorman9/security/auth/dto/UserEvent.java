@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEvent {
-    public static final String TOPIC_NAME = "userEvents";
+    public static final String NAME = "userEvents";
 
     private UUID userId;
 
