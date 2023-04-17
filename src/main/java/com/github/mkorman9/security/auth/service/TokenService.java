@@ -25,6 +25,9 @@ public class TokenService {
     @Inject
     EntityManager entityManager;
 
+    @Inject
+    UserService userService;
+
     @Transactional
     public Optional<Token> findToken(String token) {
         try {
@@ -40,10 +43,15 @@ public class TokenService {
     }
 
     @Transactional
-    public Token issueToken(TokenIssueRequest request) {
+    public Optional<Token> issueToken(TokenIssueRequest request) {
+        var maybeUser = userService.getById(request.getUserId());
+        if (maybeUser.isEmpty()) {
+            return Optional.empty();
+        }
+
         var token = new Token();
         token.setToken(generateToken());
-        token.setUser(request.getUser());
+        token.setUser(maybeUser.get());
         token.setIssuedAt(Instant.now());
         token.setRemoteAddress(request.getRemoteAddress());
         token.setDevice(request.getDevice());
@@ -51,7 +59,7 @@ public class TokenService {
 
         entityManager.persist(token);
 
-        return token;
+        return Optional.of(token);
     }
 
     private String generateToken() {

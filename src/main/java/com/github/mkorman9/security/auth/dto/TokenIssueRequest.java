@@ -1,15 +1,16 @@
 package com.github.mkorman9.security.auth.dto;
 
-import com.github.mkorman9.security.auth.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenIssueRequest {
-    private User user;
+    private UUID userId;
 
     private String remoteAddress;
 

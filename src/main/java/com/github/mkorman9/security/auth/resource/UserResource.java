@@ -83,17 +83,16 @@ public class UserResource {
             @Context HttpServerRequest request,
             @RestHeader("X-Device") String deviceHeader
     ) {
-        var maybeUser = userService.getById(id);
-        if (maybeUser.isEmpty()) {
-            throw new WebApplicationException(Response.Status.FORBIDDEN);
-        }
-
         var tokenIssueRequest = new TokenIssueRequest();
-        tokenIssueRequest.setUser(maybeUser.get());
+        tokenIssueRequest.setUserId(id);
         tokenIssueRequest.setRemoteAddress(request.remoteAddress().hostAddress());
         tokenIssueRequest.setDevice(Objects.toString(deviceHeader, ""));
 
-        return tokenService.issueToken(tokenIssueRequest)
-                .getToken();
+        var maybeToken = tokenService.issueToken(tokenIssueRequest);
+        if (maybeToken.isEmpty()) {
+            throw new WebApplicationException(Response.Status.FORBIDDEN);
+        }
+
+        return maybeToken.get().getToken();
     }
 }
