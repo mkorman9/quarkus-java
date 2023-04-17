@@ -1,7 +1,7 @@
 package com.github.mkorman9.security.auth.service;
 
+import com.github.mkorman9.security.auth.dto.TokenIssueRequest;
 import com.github.mkorman9.security.auth.model.Token;
-import com.github.mkorman9.security.auth.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +40,13 @@ public class TokenService {
     }
 
     @Transactional
-    public Token issueToken(User owner) {
+    public Token issueToken(TokenIssueRequest request) {
         var token = new Token();
         token.setToken(generateToken());
-        token.setUser(owner);
+        token.setUser(request.getUser());
         token.setIssuedAt(Instant.now());
+        token.setRemoteAddress(request.getRemoteAddress());
+        token.setDevice(request.getDevice());
         token.setValid(true);
 
         entityManager.persist(token);

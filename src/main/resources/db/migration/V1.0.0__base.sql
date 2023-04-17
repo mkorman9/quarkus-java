@@ -14,9 +14,12 @@ CREATE TABLE user_roles (
 );
 
 CREATE TABLE tokens (
-    token     TEXT PRIMARY KEY,
-    user_id   UUID NOT NULL,
-    issued_at TIMESTAMP NOT NULL,
+    token          TEXT PRIMARY KEY,
+    user_id        UUID NOT NULL,
+    issued_at      TIMESTAMP NOT NULL,
+    remote_address TEXT NOT NULL,
+    device         TEXT NOT NULL,
+
     valid     BOOLEAN NOT NULL,
 
     CONSTRAINT tokens_users_fk FOREIGN KEY(user_id) REFERENCES users(id)

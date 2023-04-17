@@ -1,12 +1,15 @@
 package com.github.mkorman9.security.auth.resource;
 
 import com.github.mkorman9.security.auth.dto.AssignRoleRequest;
+import com.github.mkorman9.security.auth.dto.TokenIssueRequest;
 import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
 import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.TokenService;
 import com.github.mkorman9.security.auth.service.UserService;
 import io.smallrye.common.annotation.Blocking;
+import io.vertx.core.http.HttpServerRequest;
+import org.jboss.resteasy.reactive.RestHeader;
 import org.jboss.resteasy.reactive.RestPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +26,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Path("/user")
@@ -74,13 +78,22 @@ public class UserResource {
 
     @GET
     @Path("{id}/token")
-    public String getUserToken(@RestPath UUID id) {
+    public String issueToken(
+            @RestPath UUID id,
+            @Context HttpServerRequest request,
+            @RestHeader("X-Device") String deviceHeader
+    ) {
         var maybeUser = userService.getById(id);
         if (maybeUser.isEmpty()) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
 
-        return tokenService.issueToken(maybeUser.get())
+        var tokenIssueRequest = new TokenIssueRequest();
+        tokenIssueRequest.setUser(maybeUser.get());
+        tokenIssueRequest.setRemoteAddress(request.remoteAddress().hostAddress());
+        tokenIssueRequest.setDevice(Objects.toString(deviceHeader, ""));
+
+        return tokenService.issueToken(tokenIssueRequest)
                 .getToken();
     }
 }

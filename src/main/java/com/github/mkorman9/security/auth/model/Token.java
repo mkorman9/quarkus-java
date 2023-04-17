@@ -24,4 +24,10 @@ public class Token {
 
     @Column(name="valid", nullable = false)
     private boolean isValid;
+
+    @Column(name="remote_address", nullable = false)
+    private String remoteAddress;
+
+    @Column(name="device", nullable = false)
+    private String device;
 }
