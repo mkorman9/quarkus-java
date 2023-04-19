@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mkorman9.security.auth.dto.UserEvent;
 import com.github.mkorman9.security.auth.dto.UserEventsSocketConnection;
-import com.github.mkorman9.security.auth.model.Token;
 import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.TokenService;
+import com.github.mkorman9.security.auth.service.UserService;
 import io.quarkus.vertx.ConsumeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,7 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint(value = "/user/events")
@@ -27,6 +28,9 @@ public class UserEventsSocket {
 
     @Inject
     TokenService tokenService;
+
+    @Inject
+    UserService userService;
 
     @Inject
     ObjectMapper objectMapper;
@@ -77,8 +81,20 @@ public class UserEventsSocket {
             return Optional.empty();
         }
 
-        return tokenService.findToken(bearerTokenValues.get(0))
-                .map(Token::getUser);
+        var bearerToken = bearerTokenValues.get(0);
+        var maybeDecodedToken = tokenService.validateToken(bearerToken);
+        if (maybeDecodedToken.isEmpty()) {
+            return Optional.empty();
+        }
+
+        var decodedToken = maybeDecodedToken.get();
+
+        try {
+            var userId = UUID.fromString(decodedToken.getSubject());
+            return userService.getById(userId);
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     private void sendMessage(UserEventsSocketConnection connection, Object message) {
