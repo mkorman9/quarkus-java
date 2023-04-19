@@ -27,7 +27,7 @@ public class JwtAuthInterceptor {
     public Uni<Void> intercept(ContainerRequestContext context) {
         return Uni.createFrom().emitter(consumer -> {
             extractToken(context)
-                    .flatMap(token -> tokenService.validateToken(token))
+                    .flatMap(token -> tokenService.verifyToken(token))
                     .ifPresent(decoded -> context.setSecurityContext(createSecurityContext(decoded)));
 
             consumer.complete(null);

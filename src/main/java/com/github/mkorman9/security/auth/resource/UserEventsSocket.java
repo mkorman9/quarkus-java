@@ -82,7 +82,7 @@ public class UserEventsSocket {
         }
 
         var bearerToken = bearerTokenValues.get(0);
-        var maybeDecodedToken = tokenService.validateToken(bearerToken);
+        var maybeDecodedToken = tokenService.verifyToken(bearerToken);
         if (maybeDecodedToken.isEmpty()) {
             return Optional.empty();
         }

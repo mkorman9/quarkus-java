@@ -32,7 +32,7 @@ public class TokenService {
                 .build();
     }
 
-    public Optional<DecodedJWT> validateToken(String token) {
+    public Optional<DecodedJWT> verifyToken(String token) {
         try {
             return Optional.of(verifier.verify(token));
         } catch (Exception e) {
