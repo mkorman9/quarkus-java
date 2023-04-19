@@ -25,14 +25,13 @@ public class JwtAuthInterceptor {
 
     @ServerRequestFilter(preMatching = true, priority = Priorities.AUTHORIZATION)
     public Uni<Void> intercept(ContainerRequestContext context) {
-        return Uni.createFrom().deferred(() ->
-                Uni.createFrom().emitter(consumer -> {
-                    extractToken(context)
-                            .flatMap(token -> tokenService.validateToken(token))
-                            .ifPresent(decoded -> context.setSecurityContext(createSecurityContext(decoded)));
-                    consumer.complete(null);
-                })
-        );
+        return Uni.createFrom().emitter(consumer -> {
+            extractToken(context)
+                    .flatMap(token -> tokenService.validateToken(token))
+                    .ifPresent(decoded -> context.setSecurityContext(createSecurityContext(decoded)));
+
+            consumer.complete(null);
+        });
     }
 
     public static Optional<String> extractToken(ContainerRequestContext context) {
