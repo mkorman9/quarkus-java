@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.github.mkorman9.security.auth.dto.JwtTokenPrincipal;
 import com.github.mkorman9.security.auth.model.User;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -45,8 +46,8 @@ public class TokenService {
         return JWT.create()
                 .withAudience(AUDIENCE)
                 .withSubject(owner.getId().toString())
-                .withClaim("name", owner.getName())
-                .withClaim("roles", owner.getRolesSet().stream().toList())
+                .withClaim(JwtTokenPrincipal.NAME_CLAIM, owner.getName())
+                .withClaim(JwtTokenPrincipal.ROLES_CLAIM, owner.getRolesSet().stream().toList())
                 .withIssuedAt(now)
                 .withExpiresAt(now.plus(TOKEN_DURATION))
                 .sign(algorithm);

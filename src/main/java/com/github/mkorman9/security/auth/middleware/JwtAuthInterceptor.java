@@ -53,7 +53,7 @@ public class JwtAuthInterceptor {
 
     private SecurityContext createSecurityContext(DecodedJWT decodedToken) {
         var principal = new JwtTokenPrincipal(decodedToken);
-        var rolesRaw = decodedToken.getClaim("roles").asList(String.class);
+        var rolesRaw = decodedToken.getClaim(JwtTokenPrincipal.ROLES_CLAIM).asList(String.class);
         var roles = rolesRaw != null ? new HashSet<>(rolesRaw) : new HashSet<>();
 
         return new SecurityContext() {
