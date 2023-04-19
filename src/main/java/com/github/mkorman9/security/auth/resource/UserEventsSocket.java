@@ -82,15 +82,15 @@ public class UserEventsSocket {
         }
 
         var bearerToken = bearerTokenValues.get(0);
-        var maybeDecodedToken = tokenService.verifyToken(bearerToken);
-        if (maybeDecodedToken.isEmpty()) {
+        var maybeTokenPrincipal = tokenService.verifyToken(bearerToken);
+        if (maybeTokenPrincipal.isEmpty()) {
             return Optional.empty();
         }
 
-        var decodedToken = maybeDecodedToken.get();
+        var tokenPrincipal = maybeTokenPrincipal.get();
 
         try {
-            return userService.getById(decodedToken.getUserId());
+            return userService.getById(tokenPrincipal.getUserId());
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
