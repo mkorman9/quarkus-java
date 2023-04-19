@@ -45,6 +45,7 @@ public class TokenService {
         return JWT.create()
                 .withAudience(AUDIENCE)
                 .withSubject(owner.getId().toString())
+                .withClaim("name", owner.getName())
                 .withClaim("roles", owner.getRolesSet().stream().toList())
                 .withIssuedAt(now)
                 .withExpiresAt(now.plus(TOKEN_DURATION))

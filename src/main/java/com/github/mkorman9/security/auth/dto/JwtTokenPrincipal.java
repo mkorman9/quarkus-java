@@ -7,6 +7,6 @@ import java.security.Principal;
 public record JwtTokenPrincipal(DecodedJWT token) implements Principal {
     @Override
     public String getName() {
-        return token.getSubject();
+        return token.getClaim("name").asString();
     }
 }
