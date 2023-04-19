@@ -90,8 +90,7 @@ public class UserEventsSocket {
         var decodedToken = maybeDecodedToken.get();
 
         try {
-            var userId = UUID.fromString(decodedToken.getSubject());
-            return userService.getById(userId);
+            return userService.getById(decodedToken.getUserId());
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }

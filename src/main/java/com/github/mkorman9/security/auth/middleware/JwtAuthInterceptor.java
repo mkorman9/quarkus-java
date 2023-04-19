@@ -1,6 +1,5 @@
 package com.github.mkorman9.security.auth.middleware;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.mkorman9.security.auth.dto.JwtTokenPrincipal;
 import com.github.mkorman9.security.auth.service.TokenService;
 import io.smallrye.mutiny.Uni;
@@ -50,9 +49,8 @@ public class JwtAuthInterceptor {
         return Optional.of(headerParts[1]);
     }
 
-    private SecurityContext createSecurityContext(DecodedJWT decodedToken) {
-        var principal = new JwtTokenPrincipal(decodedToken);
-        var rolesRaw = decodedToken.getClaim(JwtTokenPrincipal.ROLES_CLAIM).asList(String.class);
+    private SecurityContext createSecurityContext(JwtTokenPrincipal principal) {
+        var rolesRaw = principal.token().getClaim(JwtTokenPrincipal.ROLES_CLAIM).asList(String.class);
         var roles = rolesRaw != null ? new HashSet<>(rolesRaw) : new HashSet<>();
 
         return new SecurityContext() {
