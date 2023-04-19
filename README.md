@@ -1,56 +1,45 @@
 # quarkus-java
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+## Build
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
-
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
-```shell script
-./gradlew quarkusDev
-```
-
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
-
-## Packaging and running the application
-
-The application can be packaged using:
-```shell script
+```shell
 ./gradlew build
-```
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
 
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./gradlew build -Dquarkus.package.type=uber-jar
+docker build -t quarkus-java .
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
+## Test
 
-## Creating a native executable
-
-You can create a native executable using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native
+(Requires running Docker Daemon)
+```shell
+./gradlew integrationTest
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
+## Deploy to Docker Swarm
+
+Create secrets file `secrets.properties`
+```properties
+quarkus.datasource.jdbc.url=jdbc:postgresql://prod.db.example.com:5432/quarkus-java
+quarkus.datasource.username=app
+quarkus.datasource.password=password
+
+oauth2.github.clientId=01234567890
+oauth2.github.clientSecret=01234567890
+
+jwt.secret=0123456789012345678901234567890
 ```
 
-You can then execute your native executable with: `./build/quarkus-java-1.0.0-SNAPSHOT-runner`
+Create secret
+```shell
+cat secrets.properties | docker secret create app_properties -
+```
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/gradle-tooling.
-
-## Provided Code
-
-### RESTEasy Reactive
-
-Easily start your Reactive RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+Deploy
+```shell
+docker service create \
+  --name quarkus-java \
+  --replicas 1 \
+  --publish published=8080,target=8080 \
+  --secret src=app_properties,target="/config/application.properties" \
+  quarkus-java:latest
+```
