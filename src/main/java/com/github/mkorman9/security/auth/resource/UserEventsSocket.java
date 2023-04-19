@@ -99,7 +99,7 @@ public class UserEventsSocket {
 
     private void sendMessage(UserEventsSocketConnection connection, Object message) {
         try {
-            connection.getSession()
+            connection.session()
                     .getAsyncRemote()
                     .sendText(objectMapper.writeValueAsString(message));
         } catch (JsonProcessingException e) {
