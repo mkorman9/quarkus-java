@@ -63,7 +63,7 @@ public class TcpPeerVerticle extends AbstractVerticle {
                 var receivedBytes = receiveBuffer.length() - 4;
 
                 if (receivedBytes >= declaredPacketSize) {
-                    var packet = receiveBuffer.getBuffer(4, 4 + declaredPacketSize);
+                    var packet = Buffer.buffer(receiveBuffer.getByteBuf().slice(4, declaredPacketSize));
                     packetHandler.handle(context, packet);
                     receiveBuffer = receiveBuffer.getBuffer(4 + declaredPacketSize, receiveBuffer.length());
                 } else {
