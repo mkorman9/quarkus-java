@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.net.SocketException;
 
-public class TcpConnectionVerticle extends AbstractVerticle {
-    private static final Logger LOG = LoggerFactory.getLogger(TcpConnectionVerticle.class);
+public class TcpPeerVerticle extends AbstractVerticle {
+    private static final Logger LOG = LoggerFactory.getLogger(TcpPeerVerticle.class);
 
     private final NetSocket socket;
     private final PacketHandler packetHandler;
@@ -22,7 +22,7 @@ public class TcpConnectionVerticle extends AbstractVerticle {
     private PlayerContext context;
     private Buffer receiveBuffer = Buffer.buffer();
 
-    public TcpConnectionVerticle(
+    public TcpPeerVerticle(
             NetSocket socket,
             PacketHandler packetHandler,
             PlayerRegistry playerRegistry,
@@ -52,13 +52,17 @@ public class TcpConnectionVerticle extends AbstractVerticle {
         }
 
         try {
-            var packetSize = receiveBuffer.getIntLE(0);
-            var chunkSize = receiveBuffer.length() - 4;
+            while (true) {
+                var packetSize = receiveBuffer.getIntLE(0);
+                var chunkSize = receiveBuffer.length() - 4;
 
-            if (chunkSize >= packetSize) {
-                var packet = receiveBuffer.getBuffer(4, 4 + packetSize);
-                packetHandler.handle(context, packet);
-                receiveBuffer = receiveBuffer.getBuffer(4 + packetSize, receiveBuffer.length());
+                if (chunkSize >= packetSize) {
+                    var packet = receiveBuffer.getBuffer(4, 4 + packetSize);
+                    packetHandler.handle(context, packet);
+                    receiveBuffer = receiveBuffer.getBuffer(4 + packetSize, receiveBuffer.length());
+                } else {
+                    break;
+                }
             }
         } catch (IndexOutOfBoundsException e) {
             // ignore
@@ -67,6 +71,7 @@ public class TcpConnectionVerticle extends AbstractVerticle {
 
     private void onClose() {
         playerRegistry.unregister(context);
+        vertx.undeploy(deploymentID());
     }
 
     private void onException(Throwable t) {

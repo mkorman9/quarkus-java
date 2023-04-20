@@ -9,7 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class TcpConnectionVerticleFactory {
+public class TcpPeerVerticleFactory {
     @ConfigProperty(name="tcp.server.maxPacketSize")
     int maxPacketSize;
 
@@ -19,8 +19,8 @@ public class TcpConnectionVerticleFactory {
     @Inject
     PlayerRegistry playerRegistry;
 
-    public TcpConnectionVerticle createVerticle(NetSocket socket) {
-        return new TcpConnectionVerticle(
+    public TcpPeerVerticle createVerticle(NetSocket socket) {
+        return new TcpPeerVerticle(
                 socket,
                 packetHandler,
                 playerRegistry,
