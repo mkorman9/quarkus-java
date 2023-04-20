@@ -1,6 +1,7 @@
 package com.github.mkorman9.game.server;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.net.NetSocket;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,15 +20,22 @@ public class TcpServerVerticle extends AbstractVerticle {
     int port;
 
     @Inject
-    TcpPeerManager tcpPeerManager;
+    TcpPeerVerticleFactory tcpPeerVerticleFactory;
 
     @Override
     public void start() throws Exception {
         vertx.createNetServer()
-                .connectHandler(s -> tcpPeerManager.accept(s))
+                .connectHandler(this::connectHandler)
                 .exceptionHandler(t -> LOG.error("Exception inside TCP server", t))
                 .listen(port, host)
                 .onSuccess(s -> LOG.info("Started TCP server"))
                 .onFailure(e -> LOG.error("Failed to start TCP server", e));
+    }
+
+    private void connectHandler(NetSocket socket) {
+        socket.pause();
+
+        var verticle = tcpPeerVerticleFactory.create(socket);
+        vertx.deployVerticle(verticle);
     }
 }

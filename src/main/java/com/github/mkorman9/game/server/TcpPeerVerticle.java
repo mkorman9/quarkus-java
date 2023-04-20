@@ -3,6 +3,7 @@ package com.github.mkorman9.game.server;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.service.PacketHandler;
 import com.github.mkorman9.game.service.PlayerRegistry;
+import io.vertx.core.AbstractVerticle;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
 import org.slf4j.Logger;
@@ -10,9 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import java.net.SocketException;
 
-public class TcpPeer {
-    private static final Logger LOG = LoggerFactory.getLogger(TcpPeer.class);
+public class TcpPeerVerticle extends AbstractVerticle {
+    private static final Logger LOG = LoggerFactory.getLogger(TcpPeerVerticle.class);
 
+    private final NetSocket socket;
     private final PacketHandler packetHandler;
     private final PlayerRegistry playerRegistry;
     private final int maxPacketSize;
@@ -20,22 +22,26 @@ public class TcpPeer {
     private PlayerContext context;
     private Buffer receiveBuffer = Buffer.buffer();
 
-    public TcpPeer(
+    public TcpPeerVerticle(
+            NetSocket socket,
             PacketHandler packetHandler,
             PlayerRegistry playerRegistry,
             int maxPacketSize
     ) {
+        this.socket = socket;
         this.packetHandler = packetHandler;
         this.playerRegistry = playerRegistry;
         this.maxPacketSize = maxPacketSize;
     }
 
-    public void start(NetSocket socket) {
+    @Override
+    public void start() {
         context = playerRegistry.register(socket);
 
         socket.handler(this::onMessage)
                 .closeHandler(v -> onClose())
-                .exceptionHandler(this::onException);
+                .exceptionHandler(this::onException)
+                .resume();
     }
 
     private void onMessage(Buffer buffer) {
@@ -66,6 +72,7 @@ public class TcpPeer {
 
     private void onClose() {
         playerRegistry.unregister(context);
+        vertx.undeploy(deploymentID());
     }
 
     private void onException(Throwable t) {

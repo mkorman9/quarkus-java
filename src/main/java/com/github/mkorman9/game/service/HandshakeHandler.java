@@ -8,5 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class HandshakeHandler {
     public void onHandshake(PlayerContext context, HandshakePacket packet) {
+        System.out.println(packet.getMessage());
     }
 }

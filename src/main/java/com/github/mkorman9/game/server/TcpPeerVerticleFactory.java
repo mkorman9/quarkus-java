@@ -9,7 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class TcpPeerManager {
+public class TcpPeerVerticleFactory {
     @ConfigProperty(name="tcp.server.maxPacketSize")
     int maxPacketSize;
 
@@ -19,13 +19,12 @@ public class TcpPeerManager {
     @Inject
     PlayerRegistry playerRegistry;
 
-    public void accept(NetSocket socket) {
-        var peer = new TcpPeer(
+    public TcpPeerVerticle create(NetSocket socket) {
+        return new TcpPeerVerticle(
+                socket,
                 packetHandler,
                 playerRegistry,
                 maxPacketSize
         );
-
-        peer.start(socket);
     }
 }
