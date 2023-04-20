@@ -1,6 +1,5 @@
-package com.github.mkorman9.game;
+package com.github.mkorman9.game.server;
 
-import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.Vertx;
 import org.slf4j.Logger;
@@ -22,6 +21,6 @@ public class TcpServerStarter {
 
     public void startup(@Observes StartupEvent startupEvent) {
         vertx.deployVerticle(tcpServerVerticle)
-                .onFailure(e -> Log.error("Failed to deploy TcpServerVerticle", e));
+                .onFailure(e -> LOG.error("Failed to deploy TcpServerVerticle", e));
     }
 }

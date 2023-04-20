@@ -1,4 +1,4 @@
-package com.github.mkorman9.game;
+package com.github.mkorman9.game.server;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.net.NetSocket;
