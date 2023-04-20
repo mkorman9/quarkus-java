@@ -26,6 +26,7 @@ public class TcpServerVerticle extends AbstractVerticle {
     public void start() throws Exception {
         vertx.createNetServer()
                 .connectHandler(this::connectHandler)
+                .exceptionHandler(this::exceptionHandler)
                 .listen(port, host)
                 .onSuccess(s -> LOG.info("Started TCP server"))
                 .onFailure(e -> LOG.error("Failed to start TCP server", e));
@@ -34,5 +35,9 @@ public class TcpServerVerticle extends AbstractVerticle {
     private void connectHandler(NetSocket socket) {
         var verticle = tcpPeerVerticleFactory.createVerticle(socket);
         vertx.deployVerticle(verticle);
+    }
+
+    private void exceptionHandler(Throwable t) {
+        LOG.error("Exception inside TCP server", t);
     }
 }
