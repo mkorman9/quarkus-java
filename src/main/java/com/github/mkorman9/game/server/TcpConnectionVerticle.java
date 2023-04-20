@@ -17,14 +17,21 @@ public class TcpConnectionVerticle extends AbstractVerticle {
     private final NetSocket socket;
     private final PacketHandler packetHandler;
     private final PlayerRegistry playerRegistry;
+    private final int maxPacketSize;
 
     private PlayerContext context;
     private Buffer receiveBuffer = Buffer.buffer();
 
-    public TcpConnectionVerticle(NetSocket socket, PacketHandler packetHandler, PlayerRegistry playerRegistry) {
+    public TcpConnectionVerticle(
+            NetSocket socket,
+            PacketHandler packetHandler,
+            PlayerRegistry playerRegistry,
+            int maxPacketSize
+    ) {
         this.socket = socket;
         this.packetHandler = packetHandler;
         this.playerRegistry = playerRegistry;
+        this.maxPacketSize = maxPacketSize;
     }
 
     @Override
@@ -38,6 +45,11 @@ public class TcpConnectionVerticle extends AbstractVerticle {
 
     private void onMessage(Buffer buffer) {
         receiveBuffer.appendBuffer(buffer);
+
+        if (receiveBuffer.length() > maxPacketSize) {
+            receiveBuffer = Buffer.buffer();
+            return;
+        }
 
         try {
             var packetSize = receiveBuffer.getIntLE(0);
