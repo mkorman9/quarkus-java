@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HandshakePacket {
+public class HandshakeResponsePacket {
     public static int ID = 0x00;
 
-    private String device;
+    private int players;
 
-    private String clientVersion;
+    private String serverVersion;
 }
