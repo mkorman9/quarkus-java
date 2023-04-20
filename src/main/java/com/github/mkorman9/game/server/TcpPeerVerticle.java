@@ -49,23 +49,23 @@ public class TcpPeerVerticle extends AbstractVerticle {
         playerRegistry.unregister(context);
     }
 
-    private void onMessage(Buffer buffer) {
-        receiveBuffer.appendBuffer(buffer);
-
-        if (receiveBuffer.length() > maxPacketSize) {
+    private void onMessage(Buffer message) {
+        if (receiveBuffer.length() + message.length() > maxPacketSize) {
             receiveBuffer = Buffer.buffer();
             return;
         }
 
+        receiveBuffer.appendBuffer(message);
+
         try {
             while (true) {
-                var packetSize = receiveBuffer.getIntLE(0);
-                var chunkSize = receiveBuffer.length() - 4;
+                var declaredPacketSize = receiveBuffer.getInt(0);
+                var receivedBytes = receiveBuffer.length() - 4;
 
-                if (chunkSize >= packetSize) {
-                    var packet = receiveBuffer.getBuffer(4, 4 + packetSize);
+                if (receivedBytes >= declaredPacketSize) {
+                    var packet = receiveBuffer.getBuffer(4, 4 + declaredPacketSize);
                     packetHandler.handle(context, packet);
-                    receiveBuffer = receiveBuffer.getBuffer(4 + packetSize, receiveBuffer.length());
+                    receiveBuffer = receiveBuffer.getBuffer(4 + declaredPacketSize, receiveBuffer.length());
                 } else {
                     break;
                 }

@@ -22,7 +22,7 @@ public class PacketHandler {
         var payload = packet;
 
         try {
-            packetId = packet.getIntLE(0);
+            packetId = packet.getInt(0);
             payload = packet.getBuffer(4, packet.length());
         } catch (IndexOutOfBoundsException e) {
             return;
