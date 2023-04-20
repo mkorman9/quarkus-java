@@ -1,4 +1,4 @@
-package com.github.mkorman9.game.dto.packet;
+package com.github.mkorman9.game.dto.packet.handshake;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

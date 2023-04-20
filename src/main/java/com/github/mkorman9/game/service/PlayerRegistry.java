@@ -13,7 +13,10 @@ public class PlayerRegistry {
     private final ConcurrentHashMap<PlayerContext, Boolean> clients = new ConcurrentHashMap<>();
 
     public PlayerContext register(NetSocket socket) {
-        var context = new PlayerContext(socket, ConnectionState.HANDSHAKE);
+        var context = PlayerContext.builder()
+                .socket(socket)
+                .state(ConnectionState.HANDSHAKE)
+                .build();
         clients.put(context, true);
         return context;
     }

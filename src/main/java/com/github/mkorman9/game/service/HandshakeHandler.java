@@ -2,8 +2,8 @@ package com.github.mkorman9.game.service;
 
 import com.github.mkorman9.game.dto.ConnectionState;
 import com.github.mkorman9.game.dto.PlayerContext;
-import com.github.mkorman9.game.dto.packet.HandshakePacket;
-import com.github.mkorman9.game.dto.packet.HandshakeResponsePacket;
+import com.github.mkorman9.game.dto.packet.handshake.HandshakePacket;
+import com.github.mkorman9.game.dto.packet.handshake.HandshakeResponsePacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
