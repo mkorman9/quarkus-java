@@ -41,7 +41,7 @@ public class LoginHandler {
                 context.getUserName()
         );
 
-        sender.send(context, new LoginSuccessResponsePacket(Instant.now()));
         context.setState(ConnectionState.PLAY);
+        sender.send(context, new LoginSuccessResponsePacket(Instant.now()));
     }
 }

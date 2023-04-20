@@ -25,7 +25,7 @@ public class HandshakeHandler {
                 packet.getClientVersion()
         );
 
-        sender.send(context, new HandshakeResponsePacket(1, "1.0.0"));
         context.setState(ConnectionState.LOGIN);
+        sender.send(context, new HandshakeResponsePacket(1, "1.0.0"));
     }
 }

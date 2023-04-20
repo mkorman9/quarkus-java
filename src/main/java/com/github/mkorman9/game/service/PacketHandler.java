@@ -21,6 +21,9 @@ public class PacketHandler {
     @Inject
     LoginHandler loginHandler;
 
+    @Inject
+    PlayHandler playHandler;
+
     public void handle(PlayerContext context, Buffer packet) {
         var packetId = 0;
         var payload = packet;
