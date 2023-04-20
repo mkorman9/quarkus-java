@@ -1,7 +1,7 @@
 package com.github.mkorman9.game.server;
 
-import com.github.mkorman9.game.service.PlayerRegistry;
 import com.github.mkorman9.game.service.PacketHandler;
+import com.github.mkorman9.game.service.PlayerRegistry;
 import io.vertx.core.net.NetSocket;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -9,7 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class TcpPeerVerticleFactory {
+public class TcpPeerManager {
     @ConfigProperty(name="tcp.server.maxPacketSize")
     int maxPacketSize;
 
@@ -19,12 +19,13 @@ public class TcpPeerVerticleFactory {
     @Inject
     PlayerRegistry playerRegistry;
 
-    public TcpPeerVerticle createVerticle(NetSocket socket) {
-        return new TcpPeerVerticle(
-                socket,
+    public void accept(NetSocket socket) {
+        var peer = new TcpPeer(
                 packetHandler,
                 playerRegistry,
                 maxPacketSize
         );
+
+        peer.start(socket);
     }
 }
