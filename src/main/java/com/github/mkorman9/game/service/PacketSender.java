@@ -3,6 +3,7 @@ package com.github.mkorman9.game.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mkorman9.game.dto.PlayerContext;
+import com.github.mkorman9.game.dto.packet.Response;
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 
@@ -14,12 +15,12 @@ public class PacketSender {
     @Inject
     ObjectMapper objectMapper;
 
-    public Future<Void> send(PlayerContext context, int packetId, Object obj) {
+    public <T extends Response> Future<Void> send(PlayerContext context, T obj) {
         try {
             var payload = objectMapper.writeValueAsString(obj);
             var packet = Buffer.buffer()
                     .appendInt(payload.length() + 4)
-                    .appendInt(packetId)
+                    .appendInt(obj.getPacketId())
                     .appendString(payload);
 
             return context.getSocket().write(packet);

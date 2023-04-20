@@ -27,7 +27,7 @@ public class LoginHandler {
         var maybeToken = tokenService.verifyToken(packet.getToken());
         if (maybeToken.isEmpty()) {
             LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
-            sender.send(context, LoginFailedResponsePacket.ID, new LoginFailedResponsePacket("Login Failed"));
+            sender.send(context, new LoginFailedResponsePacket("Login Failed"));
             return;
         }
 
@@ -41,7 +41,7 @@ public class LoginHandler {
                 context.getUserName()
         );
 
-        sender.send(context, LoginSuccessResponsePacket.ID, new LoginSuccessResponsePacket(Instant.now()));
+        sender.send(context, new LoginSuccessResponsePacket(Instant.now()));
         context.setState(ConnectionState.PLAY);
     }
 }
