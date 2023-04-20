@@ -39,9 +39,14 @@ public class TcpPeerVerticle extends AbstractVerticle {
         context = playerRegistry.register(socket);
 
         socket.handler(this::onMessage)
-                .closeHandler(v -> onClose())
+                .closeHandler(v -> vertx.undeploy(deploymentID()))
                 .exceptionHandler(this::onException)
                 .resume();
+    }
+
+    @Override
+    public void stop() {
+        playerRegistry.unregister(context);
     }
 
     private void onMessage(Buffer buffer) {
@@ -68,11 +73,6 @@ public class TcpPeerVerticle extends AbstractVerticle {
         } catch (IndexOutOfBoundsException e) {
             // ignore
         }
-    }
-
-    private void onClose() {
-        playerRegistry.unregister(context);
-        vertx.undeploy(deploymentID());
     }
 
     private void onException(Throwable t) {
