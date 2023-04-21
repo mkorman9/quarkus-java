@@ -51,7 +51,7 @@ public class TcpPeerVerticle extends AbstractVerticle {
 
     private void onChunk(Buffer chunk) {
         if (receiveBuffer.length() + chunk.length() > maxPacketSize) {
-            receiveBuffer = Buffer.buffer();
+            socket.close();
             return;
         }
 
