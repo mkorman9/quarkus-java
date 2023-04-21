@@ -26,8 +26,16 @@ public class PlayerRegistry {
     }
 
     public void forEach(Consumer<PlayerContext> consumer) {
-        clients.forEach((client, v) -> {
-            consumer.accept(client);
+        clients.forEach((context, v) -> {
+            consumer.accept(context);
+        });
+    }
+
+    public void forEachInPlay(Consumer<PlayerContext> consumer) {
+        clients.forEach((context, v) -> {
+            if (context.getState() == ConnectionState.PLAY) {
+                consumer.accept(context);
+            }
         });
     }
 }
