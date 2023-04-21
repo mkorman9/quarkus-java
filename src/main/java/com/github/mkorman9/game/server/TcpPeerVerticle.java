@@ -1,5 +1,6 @@
 package com.github.mkorman9.game.server;
 
+import com.github.mkorman9.game.dto.ConnectionState;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.service.PacketDispatcher;
 import com.github.mkorman9.game.service.PlayerRegistry;
@@ -39,7 +40,7 @@ public class TcpPeerVerticle extends AbstractVerticle {
         context = playerRegistry.register(socket);
 
         socket.handler(this::onChunk)
-                .closeHandler(v -> vertx.undeploy(deploymentID()))
+                .closeHandler(v -> onClose())
                 .exceptionHandler(this::onException)
                 .resume();
     }
@@ -73,6 +74,11 @@ public class TcpPeerVerticle extends AbstractVerticle {
         } catch (IndexOutOfBoundsException e) {
             // ignore
         }
+    }
+
+    private void onClose() {
+        context.setState(ConnectionState.DRAINING);
+        vertx.undeploy(deploymentID());
     }
 
     private void onException(Throwable t) {
