@@ -17,11 +17,11 @@ public class PacketSender {
 
     public <T extends Response> Future<Void> send(PlayerContext context, T obj) {
         try {
-            var payload = objectMapper.writeValueAsString(obj);
+            var payload = objectMapper.writeValueAsBytes(obj);
             var packet = Buffer.buffer()
-                    .appendInt(payload.length() + 4)
+                    .appendInt(payload.length + 4)
                     .appendInt(obj.getPacketId())
-                    .appendString(payload);
+                    .appendBytes(payload);
 
             return context.getSocket().write(packet);
         } catch (JsonProcessingException e) {
