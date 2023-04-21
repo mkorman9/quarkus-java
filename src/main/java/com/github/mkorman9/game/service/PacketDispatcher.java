@@ -8,6 +8,8 @@ import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.packet.handshake.HandshakePacket;
 import com.github.mkorman9.game.dto.packet.login.LoginPacket;
 import io.vertx.core.buffer.Buffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -15,6 +17,8 @@ import java.io.IOException;
 
 @ApplicationScoped
 public class PacketDispatcher {
+    private static final Logger LOG = LoggerFactory.getLogger(PacketDispatcher.class);
+
     @Inject
     ObjectMapper objectMapper;
 
@@ -38,10 +42,14 @@ public class PacketDispatcher {
             return;
         }
 
-        switch (context.getState()) {
-            case HANDSHAKE -> handleHandshake(context, packetId, payload);
-            case LOGIN -> handleLogin(context, packetId, payload);
-            case PLAY -> handlePlay(context, packetId, payload);
+        try {
+            switch (context.getState()) {
+                case HANDSHAKE -> handleHandshake(context, packetId, payload);
+                case LOGIN -> handleLogin(context, packetId, payload);
+                case PLAY -> handlePlay(context, packetId, payload);
+            }
+        } catch (Exception e) {
+            LOG.error("Uncaught exception in TCP packet dispatcher", e);
         }
     }
 
