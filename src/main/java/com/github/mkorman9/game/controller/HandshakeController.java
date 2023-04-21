@@ -1,9 +1,10 @@
-package com.github.mkorman9.game.service;
+package com.github.mkorman9.game.controller;
 
 import com.github.mkorman9.game.dto.ConnectionState;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.packet.handshake.HandshakePacket;
 import com.github.mkorman9.game.dto.packet.handshake.HandshakeResponsePacket;
+import com.github.mkorman9.game.service.PacketSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +12,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class HandshakeHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(HandshakeHandler.class);
+public class HandshakeController {
+    private static final Logger LOG = LoggerFactory.getLogger(HandshakeController.class);
 
     @Inject
     PacketSender sender;

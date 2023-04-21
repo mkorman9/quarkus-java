@@ -1,10 +1,11 @@
-package com.github.mkorman9.game.service;
+package com.github.mkorman9.game.controller;
 
 import com.github.mkorman9.game.dto.ConnectionState;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.packet.login.LoginFailedResponsePacket;
 import com.github.mkorman9.game.dto.packet.login.LoginPacket;
 import com.github.mkorman9.game.dto.packet.login.LoginSuccessResponsePacket;
+import com.github.mkorman9.game.service.PacketSender;
 import com.github.mkorman9.security.auth.service.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +15,8 @@ import javax.inject.Inject;
 import java.time.Instant;
 
 @ApplicationScoped
-public class LoginHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(LoginHandler.class);
+public class LoginController {
+    private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
     @Inject
     PacketSender sender;

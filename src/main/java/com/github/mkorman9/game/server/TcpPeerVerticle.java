@@ -1,7 +1,7 @@
 package com.github.mkorman9.game.server;
 
 import com.github.mkorman9.game.dto.PlayerContext;
-import com.github.mkorman9.game.service.PacketHandler;
+import com.github.mkorman9.game.service.PacketDispatcher;
 import com.github.mkorman9.game.service.PlayerRegistry;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.buffer.Buffer;
@@ -15,7 +15,7 @@ public class TcpPeerVerticle extends AbstractVerticle {
     private static final Logger LOG = LoggerFactory.getLogger(TcpPeerVerticle.class);
 
     private final NetSocket socket;
-    private final PacketHandler packetHandler;
+    private final PacketDispatcher packetDispatcher;
     private final PlayerRegistry playerRegistry;
     private final int maxPacketSize;
 
@@ -24,12 +24,12 @@ public class TcpPeerVerticle extends AbstractVerticle {
 
     public TcpPeerVerticle(
             NetSocket socket,
-            PacketHandler packetHandler,
+            PacketDispatcher packetDispatcher,
             PlayerRegistry playerRegistry,
             int maxPacketSize
     ) {
         this.socket = socket;
-        this.packetHandler = packetHandler;
+        this.packetDispatcher = packetDispatcher;
         this.playerRegistry = playerRegistry;
         this.maxPacketSize = maxPacketSize;
     }
@@ -64,7 +64,7 @@ public class TcpPeerVerticle extends AbstractVerticle {
 
                 if (receivedBytes >= declaredPacketSize) {
                     var packet = Buffer.buffer(receiveBuffer.getByteBuf().slice(4, declaredPacketSize));
-                    packetHandler.handle(context, packet);
+                    packetDispatcher.dispatch(context, packet);
                     receiveBuffer = receiveBuffer.getBuffer(4 + declaredPacketSize, receiveBuffer.length());
                 } else {
                     break;

@@ -1,6 +1,9 @@
 package com.github.mkorman9.game.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.mkorman9.game.controller.HandshakeController;
+import com.github.mkorman9.game.controller.LoginController;
+import com.github.mkorman9.game.controller.PlayController;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.packet.handshake.HandshakePacket;
 import com.github.mkorman9.game.dto.packet.login.LoginPacket;
@@ -11,20 +14,20 @@ import javax.inject.Inject;
 import java.io.IOException;
 
 @ApplicationScoped
-public class PacketHandler {
+public class PacketDispatcher {
     @Inject
     ObjectMapper objectMapper;
 
     @Inject
-    HandshakeHandler handshakeHandler;
+    HandshakeController handshakeController;
 
     @Inject
-    LoginHandler loginHandler;
+    LoginController loginController;
 
     @Inject
-    PlayHandler playHandler;
+    PlayController playController;
 
-    public void handle(PlayerContext context, Buffer packet) {
+    public void dispatch(PlayerContext context, Buffer packet) {
         var packetId = 0;
         var payload = packet;
 
@@ -44,13 +47,13 @@ public class PacketHandler {
 
     private void handleHandshake(PlayerContext context, int packetId, Buffer payload) {
         if (packetId == HandshakePacket.ID) {
-            handshakeHandler.onHandshake(context, readPayload(payload, HandshakePacket.class));
+            handshakeController.onHandshake(context, readPayload(payload, HandshakePacket.class));
         }
     }
 
     private void handleLogin(PlayerContext context, int packetId, Buffer payload) {
         if (packetId == LoginPacket.ID) {
-            loginHandler.onLogin(context, readPayload(payload, LoginPacket.class));
+            loginController.onLogin(context, readPayload(payload, LoginPacket.class));
         }
     }
 
