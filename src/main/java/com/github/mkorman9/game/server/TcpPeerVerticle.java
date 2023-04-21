@@ -38,7 +38,7 @@ public class TcpPeerVerticle extends AbstractVerticle {
     public void start() {
         context = playerRegistry.register(socket);
 
-        socket.handler(this::onMessage)
+        socket.handler(this::onChunk)
                 .closeHandler(v -> vertx.undeploy(deploymentID()))
                 .exceptionHandler(this::onException)
                 .resume();
@@ -49,13 +49,13 @@ public class TcpPeerVerticle extends AbstractVerticle {
         playerRegistry.unregister(context);
     }
 
-    private void onMessage(Buffer message) {
-        if (receiveBuffer.length() + message.length() > maxPacketSize) {
+    private void onChunk(Buffer chunk) {
+        if (receiveBuffer.length() + chunk.length() > maxPacketSize) {
             receiveBuffer = Buffer.buffer();
             return;
         }
 
-        receiveBuffer.appendBuffer(message);
+        receiveBuffer.appendBuffer(chunk);
 
         try {
             while (true) {
