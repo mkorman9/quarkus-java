@@ -37,7 +37,7 @@ public class PacketDispatcher {
 
         try {
             packetId = packet.getInt(0);
-            payload = packet.getBuffer(4, packet.length());
+            payload = Buffer.buffer(packet.getByteBuf().slice(4, packet.length() - 4));
         } catch (IndexOutOfBoundsException e) {
             return;
         }
