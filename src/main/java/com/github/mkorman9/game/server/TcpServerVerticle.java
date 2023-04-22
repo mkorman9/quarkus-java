@@ -27,33 +27,23 @@ public class TcpServerVerticle extends AbstractVerticle {
 
     @Override
     public void start() {
-        vertx.createNetServer()
+        server = vertx.createNetServer()
                 .connectHandler(this::connectHandler)
-                .exceptionHandler(t -> LOG.error("Exception inside TCP server", t))
-                .listen(port, host)
-                .onSuccess(s -> {
-                    LOG.info("Started TCP server");
-                    server = s;
-                })
+                .exceptionHandler(t -> LOG.error("Exception inside TCP server", t));
+
+        server.listen(port, host)
+                .onSuccess(s -> LOG.info("Started TCP server"))
                 .onFailure(t -> LOG.error("Failed to start TCP server", t));
     }
 
     @Override
     public void stop() {
-        if (server == null) {
-            return;
-        }
-
         server.close()
                 .onSuccess(v -> LOG.info("Stopped TCP server"))
                 .onFailure(t -> LOG.error("Failed to stop TCP server", t));
     }
 
     public int getPort() {
-        if (server == null) {
-            return 0;
-        }
-
         return server.actualPort();
     }
 
