@@ -29,7 +29,7 @@ public class TcpServerVerticle extends AbstractVerticle {
                 .exceptionHandler(t -> LOG.error("Exception inside TCP server", t))
                 .listen(port, host)
                 .onSuccess(s -> LOG.info("Started TCP server"))
-                .onFailure(e -> LOG.error("Failed to start TCP server", e));
+                .onFailure(t -> LOG.error("Failed to start TCP server", t));
     }
 
     private void connectHandler(NetSocket socket) {
