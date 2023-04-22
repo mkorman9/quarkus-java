@@ -40,12 +40,20 @@ public class TcpServerVerticle extends AbstractVerticle {
 
     @Override
     public void stop() {
+        if (server == null) {
+            return;
+        }
+
         server.close()
                 .onSuccess(v -> LOG.info("Stopped TCP server"))
                 .onFailure(t -> LOG.error("Failed to stop TCP server", t));
     }
 
     public int getPort() {
+        if (server == null) {
+            return 0;
+        }
+
         return server.actualPort();
     }
 
