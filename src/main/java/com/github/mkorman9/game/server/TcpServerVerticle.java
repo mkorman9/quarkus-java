@@ -20,7 +20,7 @@ public class TcpServerVerticle extends AbstractVerticle {
     int port;
 
     @Inject
-    TcpPeerVerticleFactory tcpPeerVerticleFactory;
+    TcpPeerFactory tcpPeerFactory;
 
     @Override
     public void start() throws Exception {
@@ -33,9 +33,7 @@ public class TcpServerVerticle extends AbstractVerticle {
     }
 
     private void connectHandler(NetSocket socket) {
-        socket.pause();
-
-        var verticle = tcpPeerVerticleFactory.create(socket);
-        vertx.deployVerticle(verticle);
+        var peer = tcpPeerFactory.create(socket);
+        peer.start();
     }
 }
