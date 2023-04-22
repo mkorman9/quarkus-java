@@ -28,7 +28,7 @@ public class TcpServerVerticle extends AbstractVerticle {
     @Override
     public void start() {
         server = vertx.createNetServer()
-                .connectHandler(this::connectHandler)
+                .connectHandler(this::onConnect)
                 .exceptionHandler(t -> LOG.error("Exception inside TCP server", t));
 
         server.listen(port, host)
@@ -47,7 +47,7 @@ public class TcpServerVerticle extends AbstractVerticle {
         return server.actualPort();
     }
 
-    private void connectHandler(NetSocket socket) {
+    private void onConnect(NetSocket socket) {
         var peer = tcpPeerFactory.create(socket);
         peer.start();
     }
