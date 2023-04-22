@@ -1,6 +1,7 @@
 package com.github.mkorman9.game.server;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Promise;
 import io.vertx.core.net.NetServer;
 import io.vertx.core.net.NetSocket;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -26,21 +27,33 @@ public class TcpServerVerticle extends AbstractVerticle {
     private NetServer server;
 
     @Override
-    public void start() {
+    public void start(Promise<Void> promise) {
         server = vertx.createNetServer()
                 .connectHandler(this::onConnect)
                 .exceptionHandler(t -> LOG.error("Exception inside TCP server", t));
 
         server.listen(port, host)
-                .onSuccess(s -> LOG.info("Started TCP server"))
-                .onFailure(t -> LOG.error("Failed to start TCP server", t));
+                .onSuccess(s -> {
+                    LOG.info("Started TCP server");
+                    promise.complete();
+                })
+                .onFailure(t -> {
+                    LOG.error("Failed to start TCP server", t);
+                    promise.fail(t);
+                });
     }
 
     @Override
-    public void stop() {
+    public void stop(Promise<Void> promise) {
         server.close()
-                .onSuccess(v -> LOG.info("Stopped TCP server"))
-                .onFailure(t -> LOG.error("Failed to stop TCP server", t));
+                .onSuccess(v -> {
+                    LOG.info("Stopped TCP server");
+                    promise.complete();
+                })
+                .onFailure(t -> {
+                    LOG.error("Failed to stop TCP server", t);
+                    promise.fail(t);
+                });
     }
 
     public int getPort() {
