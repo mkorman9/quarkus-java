@@ -1,6 +1,5 @@
 package com.github.mkorman9.game.server;
 
-import com.github.mkorman9.game.dto.ConnectionState;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.service.PacketDispatcher;
 import com.github.mkorman9.game.service.PlayerRegistry;
@@ -69,7 +68,6 @@ public class TcpPeer {
     }
 
     private void onClose() {
-        context.setState(ConnectionState.DRAINING);
         playerRegistry.unregister(context);
     }
 
