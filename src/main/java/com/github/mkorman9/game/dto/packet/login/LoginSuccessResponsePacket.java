@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +16,8 @@ public class LoginSuccessResponsePacket implements Response {
     public static int ID = 0x00;
 
     private Instant timestamp;
+
+    private Set<String> roles;
 
     @Override
     @JsonIgnore

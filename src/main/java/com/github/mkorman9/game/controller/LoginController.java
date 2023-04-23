@@ -2,11 +2,14 @@ package com.github.mkorman9.game.controller;
 
 import com.github.mkorman9.game.dto.ConnectionState;
 import com.github.mkorman9.game.dto.PlayerContext;
+import com.github.mkorman9.game.dto.UserDataRequest;
+import com.github.mkorman9.game.dto.UserDataResponse;
 import com.github.mkorman9.game.dto.packet.login.LoginFailedResponsePacket;
 import com.github.mkorman9.game.dto.packet.login.LoginPacket;
 import com.github.mkorman9.game.dto.packet.login.LoginSuccessResponsePacket;
 import com.github.mkorman9.game.service.PacketSender;
 import com.github.mkorman9.security.auth.service.TokenService;
+import io.vertx.core.eventbus.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +26,9 @@ public class LoginController {
 
     @Inject
     TokenService tokenService;
+
+    @Inject
+    EventBus eventBus;
 
     public void onLogin(PlayerContext context, LoginPacket packet) {
         var maybeToken = tokenService.verifyToken(packet.getToken());
@@ -42,7 +48,11 @@ public class LoginController {
                 context.getUserName()
         );
 
-        context.setState(ConnectionState.PLAY);
-        sender.send(context, new LoginSuccessResponsePacket(Instant.now()));
+        eventBus.<UserDataResponse>request(UserDataRequest.NAME, new UserDataRequest(context.getUserId()))
+                .onSuccess(m -> {
+                    context.setState(ConnectionState.PLAY);
+                    sender.send(context, new LoginSuccessResponsePacket(Instant.now(), m.body().roles()));
+                })
+                .onFailure(t -> LOG.error("Error while requesting user data", t));
     }
 }
