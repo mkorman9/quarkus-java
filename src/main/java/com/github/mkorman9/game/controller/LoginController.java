@@ -34,8 +34,8 @@ public class LoginController {
         var maybeToken = tokenService.verifyToken(packet.getToken());
         if (maybeToken.isEmpty()) {
             LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
-            sender.send(context, new LoginFailedResponsePacket("Login Failed"));
-            context.getSocket().close();
+            sender.send(context, new LoginFailedResponsePacket("Login Failed"))
+                    .onSuccess(v -> context.getSocket().close());
             return;
         }
 
