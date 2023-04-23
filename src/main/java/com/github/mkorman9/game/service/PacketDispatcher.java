@@ -31,17 +31,7 @@ public class PacketDispatcher {
     @Inject
     PlayController playController;
 
-    public void dispatch(PlayerContext context, Buffer packet) {
-        var packetId = 0;
-        var payload = packet;
-
-        try {
-            packetId = packet.getInt(0);
-            payload = Buffer.buffer(packet.getByteBuf().slice(4, packet.length() - 4));
-        } catch (IndexOutOfBoundsException e) {
-            return;
-        }
-
+    public void dispatch(PlayerContext context, int packetId, Buffer payload) {
         try {
             switch (context.getState()) {
                 case HANDSHAKE -> handleHandshake(context, packetId, payload);

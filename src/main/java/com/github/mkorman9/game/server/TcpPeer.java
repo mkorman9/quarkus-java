@@ -52,11 +52,14 @@ public class TcpPeer {
         try {
             while (true) {
                 var declaredPacketSize = receiveBuffer.getInt(0);
-                var receivedBytes = receiveBuffer.length() - 4;
+                var packetSize = receiveBuffer.length() - 4;
 
-                if (receivedBytes >= declaredPacketSize) {
-                    var packet = Buffer.buffer(receiveBuffer.getByteBuf().slice(4, declaredPacketSize));
-                    packetDispatcher.dispatch(context, packet);
+                if (packetSize >= declaredPacketSize) {
+                    var packetId = receiveBuffer.getInt(4);
+                    var payload = Buffer.buffer(receiveBuffer.getByteBuf().slice(8, declaredPacketSize - 4));
+
+                    packetDispatcher.dispatch(context, packetId, payload);
+
                     receiveBuffer = receiveBuffer.getBuffer(4 + declaredPacketSize, receiveBuffer.length());
                 } else {
                     break;
