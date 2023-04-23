@@ -35,24 +35,29 @@ public class LoginController {
         if (maybeToken.isEmpty()) {
             LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
             sender.send(context, new LoginFailedResponsePacket("Login Failed"));
+            context.getSocket().close();
             return;
         }
 
         var token = maybeToken.get();
-        context.setUserName(token.getName());
-        context.setUserId(token.getUserId());
 
-        LOG.info(
-                "{} logged in as {}",
-                context.getSocket().remoteAddress().hostAddress(),
-                context.getUserName()
-        );
-
-        eventBus.<UserDataResponse>request(UserDataRequest.NAME, new UserDataRequest(context.getUserId()))
+        eventBus.<UserDataResponse>request(UserDataRequest.NAME, new UserDataRequest(token.getUserId()))
                 .onSuccess(m -> {
+                    LOG.info(
+                            "{} logged in as {}",
+                            context.getSocket().remoteAddress().hostAddress(),
+                            token.getName()
+                    );
+
+                    context.setUserName(token.getName());
+                    context.setUserId(token.getUserId());
                     context.setState(ConnectionState.PLAY);
+
                     sender.send(context, new LoginSuccessResponsePacket(Instant.now(), m.body().roles()));
                 })
-                .onFailure(t -> LOG.error("Error while requesting user data", t));
+                .onFailure(t -> {
+                    LOG.error("Error while requesting user data", t);
+                    context.getSocket().close();
+                });
     }
 }
