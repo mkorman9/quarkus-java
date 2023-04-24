@@ -43,6 +43,8 @@ public class LoginController {
 
         eventBus.<UserDataResponse>request(UserDataRequest.NAME, new UserDataRequest(token.getUserId()))
                 .onSuccess(m -> {
+                    var response = m.body();
+
                     LOG.info(
                             "{} logged in as {}",
                             context.getSocket().remoteAddress().hostAddress(),
@@ -53,7 +55,7 @@ public class LoginController {
                     context.setUserId(token.getUserId());
                     context.setState(ConnectionState.PLAY);
 
-                    sender.send(context, new LoginSuccessResponsePacket(Instant.now(), m.body().roles()));
+                    sender.send(context, new LoginSuccessResponsePacket(Instant.now(), response.roles()));
                 })
                 .onFailure(t -> {
                     LOG.error("Error while requesting user data", t);
