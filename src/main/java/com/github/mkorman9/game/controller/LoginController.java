@@ -37,23 +37,23 @@ public class LoginController {
     }
 
     private void performLogin(PlayerContext context, TokenVerificationResponse response) {
-        if (response.verified()) {
-            LOG.info(
-                    "{} logged in as {}",
-                    context.getSocket().remoteAddress().hostAddress(),
-                    response.userName()
-            );
-
-            context.setUserName(response.userName());
-            context.setUserId(response.userId());
-            context.setState(ConnectionState.PLAY);
-
-            sender.send(context, new LoginSuccessResponsePacket(Instant.now(), response.roles()));
-        } else {
+        if (!response.verified()) {
             LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
 
             sender.send(context, new LoginFailedResponsePacket("Login Failed"))
                     .onSuccess(v -> context.getSocket().close());
         }
+
+        LOG.info(
+                "{} logged in as {}",
+                context.getSocket().remoteAddress().hostAddress(),
+                response.userName()
+        );
+
+        context.setUserName(response.userName());
+        context.setUserId(response.userId());
+        context.setState(ConnectionState.PLAY);
+
+        sender.send(context, new LoginSuccessResponsePacket(Instant.now(), response.roles()));
     }
 }
