@@ -42,6 +42,8 @@ public class LoginController {
 
             sender.send(context, new LoginFailedResponsePacket("Login Failed"))
                     .onSuccess(v -> context.getSocket().close());
+
+            return;
         }
 
         LOG.info(
