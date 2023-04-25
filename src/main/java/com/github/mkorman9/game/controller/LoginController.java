@@ -29,31 +29,31 @@ public class LoginController {
     public void onLogin(PlayerContext context, LoginPacket packet) {
         var request = new TokenVerificationRequest(packet.getToken());
         eventBus.<TokenVerificationResponse>request(TokenVerificationRequest.NAME, request)
-                .onSuccess(m -> {
-                    var response = m.body();
-
-                    if (response.verified()) {
-                        LOG.info(
-                                "{} logged in as {}",
-                                context.getSocket().remoteAddress().hostAddress(),
-                                response.userName()
-                        );
-
-                        context.setUserName(response.userName());
-                        context.setUserId(response.userId());
-                        context.setState(ConnectionState.PLAY);
-
-                        sender.send(context, new LoginSuccessResponsePacket(Instant.now(), response.roles()));
-                    } else {
-                        LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
-
-                        sender.send(context, new LoginFailedResponsePacket("Login Failed"))
-                                .onSuccess(v -> context.getSocket().close());
-                    }
-                })
+                .onSuccess(m -> performLogin(context, m.body()))
                 .onFailure(t -> {
                     LOG.error("Error while verifying token", t);
                     context.getSocket().close();
                 });
+    }
+
+    private void performLogin(PlayerContext context, TokenVerificationResponse response) {
+        if (response.verified()) {
+            LOG.info(
+                    "{} logged in as {}",
+                    context.getSocket().remoteAddress().hostAddress(),
+                    response.userName()
+            );
+
+            context.setUserName(response.userName());
+            context.setUserId(response.userId());
+            context.setState(ConnectionState.PLAY);
+
+            sender.send(context, new LoginSuccessResponsePacket(Instant.now(), response.roles()));
+        } else {
+            LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
+
+            sender.send(context, new LoginFailedResponsePacket("Login Failed"))
+                    .onSuccess(v -> context.getSocket().close());
+        }
     }
 }
