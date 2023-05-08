@@ -32,7 +32,7 @@ public class LoginController {
                 .onSuccess(m -> performLogin(context, m.body()))
                 .onFailure(t -> {
                     LOG.error("Error while verifying token", t);
-                    context.getSocket().close();
+                    context.disconnect();
                 });
     }
 
@@ -41,7 +41,7 @@ public class LoginController {
             LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
 
             sender.send(context, new LoginFailedResponsePacket("Login Failed"))
-                    .onSuccess(v -> context.getSocket().close());
+                    .onSuccess(v -> context.disconnect());
 
             return;
         }
