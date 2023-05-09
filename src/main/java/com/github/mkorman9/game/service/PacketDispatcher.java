@@ -31,7 +31,7 @@ public class PacketDispatcher {
     @Inject
     PlayController playController;
 
-    public void dispatch(PlayerContext context, short packetId, Buffer payload) {
+    public void dispatch(PlayerContext context, int packetId, Buffer payload) {
         try {
             switch (context.getState()) {
                 case HANDSHAKE -> handleHandshake(context, packetId, payload);
@@ -43,19 +43,19 @@ public class PacketDispatcher {
         }
     }
 
-    private void handleHandshake(PlayerContext context, short packetId, Buffer payload) {
+    private void handleHandshake(PlayerContext context, int packetId, Buffer payload) {
         if (packetId == HandshakePacket.ID) {
             handshakeController.onHandshake(context, readPayload(payload, HandshakePacket.class));
         }
     }
 
-    private void handleLogin(PlayerContext context, short packetId, Buffer payload) {
+    private void handleLogin(PlayerContext context, int packetId, Buffer payload) {
         if (packetId == LoginPacket.ID) {
             loginController.onLogin(context, readPayload(payload, LoginPacket.class));
         }
     }
 
-    private void handlePlay(PlayerContext context, short packetId, Buffer payload) {
+    private void handlePlay(PlayerContext context, int packetId, Buffer payload) {
     }
 
     private <T> T readPayload(Buffer payload, Class<T> clazz) {

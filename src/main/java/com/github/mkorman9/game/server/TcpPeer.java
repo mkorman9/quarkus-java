@@ -3,7 +3,6 @@ package com.github.mkorman9.game.server;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.VarInt;
 import com.github.mkorman9.game.service.PacketDispatcher;
-import com.github.mkorman9.game.service.PacketSender;
 import com.github.mkorman9.game.service.PlayerRegistry;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
@@ -57,13 +56,13 @@ public class TcpPeer {
                 var receivedPacketSize = receiveBuffer.length() - declaredPacketSize.getLength();
 
                 if (receivedPacketSize >= declaredPacketSize.getValue()) {
-                    var packetId = receiveBuffer.getShort(declaredPacketSize.getLength());
+                    var packetId = VarInt.read(receiveBuffer, declaredPacketSize.getLength());
                     var payload = Buffer.buffer(receiveBuffer.getByteBuf().slice(
-                            declaredPacketSize.getLength() + PacketSender.PACKET_ID_LENGTH,
-                            declaredPacketSize.getValue() - PacketSender.PACKET_ID_LENGTH
+                            declaredPacketSize.getLength() + packetId.getLength(),
+                            declaredPacketSize.getValue() - packetId.getLength()
                     ));
 
-                    packetDispatcher.dispatch(context, packetId, payload);
+                    packetDispatcher.dispatch(context, packetId.getValue(), payload);
 
                     receiveBuffer = receiveBuffer.getBuffer(
                             declaredPacketSize.getLength() + declaredPacketSize.getValue(),

@@ -13,17 +13,17 @@ import javax.inject.Inject;
 
 @ApplicationScoped
 public class PacketSender {
-    public static final int PACKET_ID_LENGTH = 2;
-
     @Inject
     ObjectMapper objectMapper;
 
     public <T extends Response> Future<Void> send(PlayerContext context, T obj) {
         try {
             var payload = objectMapper.writeValueAsBytes(obj);
+            var packetId = VarInt.of(obj.packetId());
+            var packetLength = VarInt.of(payload.length + packetId.getLength());
             var packet = Buffer.buffer()
-                    .appendBytes(VarInt.encode(payload.length + PACKET_ID_LENGTH))
-                    .appendShort(obj.packetId())
+                    .appendBytes(packetLength.encode())
+                    .appendBytes(packetId.encode())
                     .appendBytes(payload);
 
             return context.getSocket().write(packet);

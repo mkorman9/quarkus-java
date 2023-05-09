@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginPacket {
-    public static short ID = 0x00;
+    public static int ID = 0x00;
 
     private String token;
 }

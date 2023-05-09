@@ -12,14 +12,14 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginSuccessResponsePacket implements Response {
-    public static short ID = 0x00;
+    public static int ID = 0x00;
 
     private Instant timestamp;
 
     private Set<String> roles;
 
     @Override
-    public short packetId() {
+    public int packetId() {
         return ID;
     }
 }

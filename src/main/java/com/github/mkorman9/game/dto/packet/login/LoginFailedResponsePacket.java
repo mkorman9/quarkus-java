@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginFailedResponsePacket implements Response {
-    public static short ID = 0x01;
+    public static int ID = 0x01;
 
     private String message;
 
     @Override
-    public short packetId() {
+    public int packetId() {
         return ID;
     }
 }

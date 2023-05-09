@@ -16,42 +16,56 @@ public class VarInt {
         this.length = length;
     }
 
+    public static VarInt of(int value) {
+        byte length = 1;
+
+        while ((value & ~SEGMENT_BITS) != 0) {
+            length++;
+            value >>>= 7;
+        }
+
+        return new VarInt(value, length);
+    }
+
     public static VarInt read(Buffer source) {
+        return read(source, 0);
+    }
+
+    public static VarInt read(Buffer source, int index) {
         int value = 0;
         int offset = 0;
-        byte index = 0;
+        byte length = 1;
 
         while (true) {
-            byte currentByte = source.getByte(index);
-            value |= (currentByte & SEGMENT_BITS) << offset;
+            byte current = source.getByte(index);
+            index++;
+            value |= (current & SEGMENT_BITS) << offset;
 
-            if ((currentByte & CONTINUE_BIT) == 0) {
+            if ((current & CONTINUE_BIT) == 0) {
                 break;
             }
 
             offset += 7;
-            index++;
+            length++;
 
             if (offset >= 32) {
                 throw new IllegalArgumentException("VarInt is too big");
             }
         }
 
-        return new VarInt(value, (byte) (index + 1));
+        return new VarInt(value, length);
     }
 
-    public static byte[] encode(int value) {
+    public byte[] encode() {
         var target = Buffer.buffer();
+        var v = value;
 
-        while (true) {
-            if ((value & ~SEGMENT_BITS) == 0) {
-                target.appendByte((byte) value);
-                return target.getBytes();
-            }
-
-            target.appendByte((byte) ((value & SEGMENT_BITS) | CONTINUE_BIT));
-
-            value >>>= 7;
+        for (int i = 0; i < length; i++) {
+            target.appendByte((byte) ((v & SEGMENT_BITS) | CONTINUE_BIT));
+            v >>>= 7;
         }
+
+        target.appendByte((byte) v);
+        return target.getBytes();
     }
 }
