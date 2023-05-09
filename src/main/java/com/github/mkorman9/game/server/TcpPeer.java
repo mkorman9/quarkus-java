@@ -1,7 +1,9 @@
 package com.github.mkorman9.game.server;
 
 import com.github.mkorman9.game.dto.PlayerContext;
+import com.github.mkorman9.game.dto.VarInt;
 import com.github.mkorman9.game.service.PacketDispatcher;
+import com.github.mkorman9.game.service.PacketSender;
 import com.github.mkorman9.game.service.PlayerRegistry;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
@@ -51,21 +53,27 @@ public class TcpPeer {
 
         try {
             while (true) {
-                var declaredPacketSize = receiveBuffer.getInt(0);
-                var packetSize = receiveBuffer.length() - 4;
+                var declaredPacketSize = VarInt.read(receiveBuffer);
+                var receivedPacketSize = receiveBuffer.length() - declaredPacketSize.getLength();
 
-                if (packetSize >= declaredPacketSize) {
-                    var packetId = receiveBuffer.getShort(4);
-                    var payload = Buffer.buffer(receiveBuffer.getByteBuf().slice(6, declaredPacketSize - 2));
+                if (receivedPacketSize >= declaredPacketSize.getValue()) {
+                    var packetId = receiveBuffer.getShort(declaredPacketSize.getLength());
+                    var payload = Buffer.buffer(receiveBuffer.getByteBuf().slice(
+                            declaredPacketSize.getLength() + PacketSender.PACKET_ID_LENGTH,
+                            declaredPacketSize.getValue() - PacketSender.PACKET_ID_LENGTH
+                    ));
 
                     packetDispatcher.dispatch(context, packetId, payload);
 
-                    receiveBuffer = receiveBuffer.getBuffer(4 + declaredPacketSize, receiveBuffer.length());
+                    receiveBuffer = receiveBuffer.getBuffer(
+                            declaredPacketSize.getLength() + declaredPacketSize.getValue(),
+                            receiveBuffer.length()
+                    );
                 } else {
                     break;
                 }
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
             // ignore
         }
     }
