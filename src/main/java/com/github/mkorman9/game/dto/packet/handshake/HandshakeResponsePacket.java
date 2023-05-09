@@ -1,6 +1,5 @@
 package com.github.mkorman9.game.dto.packet.handshake;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.mkorman9.game.dto.packet.Response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,8 +16,7 @@ public class HandshakeResponsePacket implements Response {
     private String serverVersion;
 
     @Override
-    @JsonIgnore
-    public int getPacketId() {
+    public int packetId() {
         return ID;
     }
 }

@@ -1,6 +1,5 @@
 package com.github.mkorman9.game.dto.packet.login;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.mkorman9.game.dto.packet.Response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,8 +19,7 @@ public class LoginSuccessResponsePacket implements Response {
     private Set<String> roles;
 
     @Override
-    @JsonIgnore
-    public int getPacketId() {
+    public int packetId() {
         return ID;
     }
 }
