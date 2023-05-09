@@ -60,7 +60,7 @@ public class VarInt {
         var target = Buffer.buffer();
         var v = value;
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length - 1; i++) {
             target.appendByte((byte) ((v & SEGMENT_BITS) | CONTINUE_BIT));
             v >>>= 7;
         }
