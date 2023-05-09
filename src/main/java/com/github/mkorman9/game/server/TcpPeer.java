@@ -44,7 +44,7 @@ public class TcpPeer {
 
     private void onChunk(Buffer chunk) {
         if (receiveBuffer.length() + chunk.length() > maxPacketSize) {
-            socket.close();
+            context.disconnect();
             return;
         }
 
