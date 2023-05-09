@@ -19,8 +19,8 @@ public class PacketSender {
         try {
             var payload = objectMapper.writeValueAsBytes(obj);
             var packet = Buffer.buffer()
-                    .appendInt(payload.length + 4)
-                    .appendInt(obj.packetId())
+                    .appendInt(payload.length + 2)
+                    .appendShort(obj.packetId())
                     .appendBytes(payload);
 
             return context.getSocket().write(packet);

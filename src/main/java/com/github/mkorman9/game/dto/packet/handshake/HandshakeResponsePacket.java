@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HandshakeResponsePacket implements Response {
-    public static int ID = 0x00;
+    public static short ID = 0x00;
 
     private int players;
 
     private String serverVersion;
 
     @Override
-    public int packetId() {
+    public short packetId() {
         return ID;
     }
 }
