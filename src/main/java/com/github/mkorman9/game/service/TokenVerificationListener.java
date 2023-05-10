@@ -23,7 +23,9 @@ public class TokenVerificationListener {
     public TokenVerificationResponse onTokenVerificationRequest(TokenVerificationRequest request) {
         var maybeToken = tokenService.verifyToken(request.token());
         if (maybeToken.isEmpty()) {
-            return new TokenVerificationResponse(false, null, null, null);
+            return TokenVerificationResponse.builder()
+                    .verified(false)
+                    .build();
         }
 
         var token = maybeToken.get();
@@ -34,6 +36,11 @@ public class TokenVerificationListener {
         }
 
         var user = maybeUser.get();
-        return new TokenVerificationResponse(true, user.getId(), user.getName(), user.getRolesSet());
+        return TokenVerificationResponse.builder()
+                .verified(true)
+                .userId(user.getId())
+                .userName(user.getName())
+                .roles(user.getRolesSet())
+                .build();
     }
 }

@@ -37,7 +37,7 @@ public class LoginController {
     }
 
     private void performLogin(PlayerContext context, TokenVerificationResponse response) {
-        if (!response.verified()) {
+        if (!response.isVerified()) {
             LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
 
             sender.send(context, new LoginFailedResponsePacket("Login Failed"))
@@ -49,13 +49,13 @@ public class LoginController {
         LOG.info(
                 "{} logged in as {}",
                 context.getSocket().remoteAddress().hostAddress(),
-                response.userName()
+                response.getUserName()
         );
 
-        context.setUserName(response.userName());
-        context.setUserId(response.userId());
+        context.setUserName(response.getUserName());
+        context.setUserId(response.getUserId());
         context.setState(ConnectionState.PLAY);
 
-        sender.send(context, new LoginSuccessResponsePacket(Instant.now(), response.roles()));
+        sender.send(context, new LoginSuccessResponsePacket(Instant.now(), response.getRoles()));
     }
 }
