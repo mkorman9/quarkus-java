@@ -15,6 +15,8 @@ import java.net.SocketException;
  * TcpPeer is instantiated for every TCP peer connection accepted by the server.
  * It is responsible for handling underlying socket operations and de-segmentation of received network chunks.
  * The structure of a single chunk is the following:
+ * <pre>
+ * {@code
  * Chunk:
  *   -----------------------------------------------
  *   | Packet Length | Packet:                     |
@@ -23,7 +25,9 @@ import java.net.SocketException;
  *   |               | |  (VarInt)  |   (bytes)  | |
  *   |               | --------------------------- |
  *   -----------------------------------------------
- * Packet Length and Packet ID are represented by Variable Length Quantity (see <code>VarInt</code>).
+ *   }
+ * </pre>
+ * Packet Length and Packet ID are represented by Variable Length Quantity (see {@link VarInt}).
  * Payload content is dependent on the value of Packet ID.
 */
 public class TcpPeer {
