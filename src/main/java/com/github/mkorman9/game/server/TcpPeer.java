@@ -11,6 +11,20 @@ import org.slf4j.LoggerFactory;
 
 import java.net.SocketException;
 
+/**
+ * Class responsible for handling peer connections, reading and de-segmentation of network chunks.
+ * The structure of a single chunk is the following:
+ * Chunk:
+ *   -----------------------------------------------
+ *   | Packet Length | Packet:                     |
+ *   |   (VarInt)    | --------------------------- |
+ *   |               | |  Packet ID |   Payload  | |
+ *   |               | |  (VarInt)  |   (bytes)  | |
+ *   |               | --------------------------- |
+ *   -----------------------------------------------
+ * Packet Length and Packet ID are represented by Variable Length Quantity (see VarInt).
+ * Payload content is dependent on the value of Packet ID.
+*/
 public class TcpPeer {
     private static final Logger LOG = LoggerFactory.getLogger(TcpPeer.class);
 

@@ -3,6 +3,9 @@ package com.github.mkorman9.game.dto;
 import io.vertx.core.buffer.Buffer;
 import lombok.Data;
 
+/**
+ * VarInt represents a <a href="https://en.wikipedia.org/wiki/Variable-length_quantity">Variable Length Quantity</a>
+ */
 @Data
 public class VarInt {
     private static final int SEGMENT_BITS = 0x7F;
