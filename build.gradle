@@ -18,6 +18,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-vertx'
     implementation 'io.quarkus:quarkus-resteasy-reactive'
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+    implementation 'io.quarkus:quarkus-scheduler'
     implementation 'io.quarkus:quarkus-websockets'
     implementation 'io.quarkus:quarkus-security'
     implementation 'io.quarkus:quarkus-jdbc-postgresql'
