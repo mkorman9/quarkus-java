@@ -1,11 +1,12 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 
-RUN adduser -u 9999 -D -H runner
+RUN addgroup --system --gid=9999 runner && \
+    adduser --system --uid=9999 --gid=9999 --home /deployments --disabled-password runner
 
-COPY --chown=9999 build/quarkus-app/lib/ /deployments/lib/
-COPY --chown=9999 build/quarkus-app/*.jar /deployments/
-COPY --chown=9999 build/quarkus-app/app/ /deployments/app/
-COPY --chown=9999 build/quarkus-app/quarkus/ /deployments/quarkus/
+COPY --chown=runner:runner build/quarkus-app/lib/ /deployments/lib/
+COPY --chown=runner:runner build/quarkus-app/*.jar /deployments/
+COPY --chown=runner:runner build/quarkus-app/app/ /deployments/app/
+COPY --chown=runner:runner build/quarkus-app/quarkus/ /deployments/quarkus/
 
 USER runner
 WORKDIR /
