@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.VarInt;
-import com.github.mkorman9.game.dto.packet.Response;
+import com.github.mkorman9.game.dto.packet.Sendable;
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 
@@ -16,7 +16,7 @@ public class PacketSender {
     @Inject
     ObjectMapper objectMapper;
 
-    public <T extends Response> Future<Void> send(PlayerContext context, T obj) {
+    public <T extends Sendable> Future<Void> send(PlayerContext context, T obj) {
         try {
             var payload = objectMapper.writeValueAsBytes(obj);
             var packetId = VarInt.of(obj.packetId());

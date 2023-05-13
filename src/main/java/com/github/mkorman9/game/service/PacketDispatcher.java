@@ -7,6 +7,7 @@ import com.github.mkorman9.game.controller.PlayController;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.packet.handshake.HandshakePacket;
 import com.github.mkorman9.game.dto.packet.login.LoginPacket;
+import com.github.mkorman9.game.dto.packet.play.HeartbeatResponse;
 import io.vertx.core.buffer.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,9 @@ public class PacketDispatcher {
     }
 
     private void handlePlay(PlayerContext context, int packetId, Buffer payload) {
+        if (packetId == HeartbeatResponse.ID) {
+            playController.onHeartbeatResponse(context, readPayload(payload, HeartbeatResponse.class));
+        }
     }
 
     private <T> T readPayload(Buffer payload, Class<T> clazz) {

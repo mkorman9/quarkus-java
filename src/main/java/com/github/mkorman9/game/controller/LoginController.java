@@ -1,9 +1,6 @@
 package com.github.mkorman9.game.controller;
 
-import com.github.mkorman9.game.dto.ConnectionState;
-import com.github.mkorman9.game.dto.PlayerContext;
-import com.github.mkorman9.game.dto.TokenVerificationRequest;
-import com.github.mkorman9.game.dto.TokenVerificationResponse;
+import com.github.mkorman9.game.dto.*;
 import com.github.mkorman9.game.dto.packet.login.LoginFailedResponsePacket;
 import com.github.mkorman9.game.dto.packet.login.LoginPacket;
 import com.github.mkorman9.game.dto.packet.login.LoginSuccessResponsePacket;
@@ -32,7 +29,7 @@ public class LoginController {
                 .onSuccess(m -> performLogin(context, m.body()))
                 .onFailure(t -> {
                     LOG.error("Error while verifying token", t);
-                    context.disconnect();
+                    context.disconnect(PlayerDisconnectReason.SERVER_ERROR);
                 });
     }
 
@@ -41,7 +38,7 @@ public class LoginController {
             LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
 
             sender.send(context, new LoginFailedResponsePacket("Login Failed"))
-                    .onSuccess(v -> context.disconnect());
+                    .onSuccess(v -> context.disconnect(PlayerDisconnectReason.LOGIN_FAILED));
 
             return;
         }

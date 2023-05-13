@@ -6,10 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Data
 @Builder
 public class PlayerContext {
+    private UUID connectionId;
+
+    private AtomicReference<PlayerDisconnectReason> disconnectReason;
+
     private NetSocket socket;
 
     private ConnectionState state;
@@ -18,7 +23,14 @@ public class PlayerContext {
 
     private UUID userId;
 
+    private HeartbeatInfo heartbeatInfo;
+
     public Future<Void> disconnect() {
         return socket.close();
+    }
+
+    public Future<Void> disconnect(PlayerDisconnectReason disconnectReason) {
+        this.disconnectReason.set(disconnectReason);
+        return disconnect();
     }
 }
