@@ -13,4 +13,6 @@ public class HeartbeatInfo {
     private AtomicReference<Instant> lastSent = new AtomicReference<>(Instant.now());
 
     private AtomicLong ping = new AtomicLong(0);
+
+    private AtomicLong lastData = new AtomicLong(0);
 }

@@ -19,6 +19,11 @@ public class PlayController {
     PacketSender sender;
 
     public void onHeartbeatResponse(PlayerContext context, HeartbeatResponse response) {
+        var lastData = context.getHeartbeatInfo().getLastData().get();
+        if (lastData != response.getData()) {
+            return;
+        }
+
         var lastResponse = Instant.now();
         var lastSent = context.getHeartbeatInfo().getLastSent().get();
 

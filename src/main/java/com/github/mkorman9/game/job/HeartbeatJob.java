@@ -14,10 +14,12 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Random;
 
 @ApplicationScoped
 public class HeartbeatJob {
     private static final Logger LOG = LoggerFactory.getLogger(HeartbeatJob.class);
+    private static final Random RANDOM = new Random();
 
     @Inject
     PlayerRegistry playerRegistry;
@@ -36,7 +38,10 @@ public class HeartbeatJob {
                 return;
             }
 
-            var request = new HeartbeatRequest(1000);
+            var heartbeatData = RANDOM.nextLong();
+            var request = new HeartbeatRequest(heartbeatData);
+            context.getHeartbeatInfo().getLastData().set(heartbeatData);
+
             packetSender.send(context, request)
                     .onSuccess(v -> successfulSend(context))
                     .onFailure(t -> failedSend(context, t));
