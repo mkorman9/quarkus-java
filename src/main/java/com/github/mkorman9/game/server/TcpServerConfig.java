@@ -13,4 +13,8 @@ public interface TcpServerConfig {
     int sendBuffer();
 
     int maxPacketSize();
+
+    int heartbeatInterval();
+
+    int heartbeatTimeout();
 }

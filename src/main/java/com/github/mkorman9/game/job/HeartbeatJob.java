@@ -3,6 +3,7 @@ package com.github.mkorman9.game.job;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.PlayerDisconnectReason;
 import com.github.mkorman9.game.dto.packet.play.HeartbeatRequest;
+import com.github.mkorman9.game.server.TcpServerConfig;
 import com.github.mkorman9.game.service.PacketSender;
 import com.github.mkorman9.game.service.PlayerRegistry;
 import io.quarkus.scheduler.Scheduled;
@@ -24,7 +25,10 @@ public class HeartbeatJob {
     @Inject
     PacketSender packetSender;
 
-    @Scheduled(every = "5s")
+    @Inject
+    TcpServerConfig config;
+
+    @Scheduled(every = "${tcp.server.heartbeat-interval}s")
     public void sendHeartbeats() {
         playerRegistry.forEachInPlay(context -> {
             if (shouldBeDisconnected(context)) {
@@ -41,7 +45,7 @@ public class HeartbeatJob {
 
     private boolean shouldBeDisconnected(PlayerContext context) {
         var lastResponse = context.getHeartbeatInfo().getLastResponse().get();
-        var deadline = Instant.now().minus(Duration.ofSeconds(10));
+        var deadline = Instant.now().minus(Duration.ofSeconds(config.heartbeatTimeout()));
 
         return lastResponse.isBefore(deadline);
     }
