@@ -4,5 +4,6 @@ public enum PlayerDisconnectReason {
     PEER_RESET,
     TIMEOUT,
     SERVER_ERROR,
-    LOGIN_FAILED
+    LOGIN_FAILED,
+    POLICY_VIOLATION
 }

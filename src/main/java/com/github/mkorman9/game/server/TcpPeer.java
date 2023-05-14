@@ -1,6 +1,7 @@
 package com.github.mkorman9.game.server;
 
 import com.github.mkorman9.game.dto.PlayerContext;
+import com.github.mkorman9.game.dto.PlayerDisconnectReason;
 import com.github.mkorman9.game.dto.VarInt;
 import com.github.mkorman9.game.service.PacketDispatcher;
 import com.github.mkorman9.game.service.PlayerRegistry;
@@ -63,7 +64,7 @@ public class TcpPeer {
 
     private void onChunk(Buffer chunk) {
         if (receiveBuffer.length() + chunk.length() > maxPacketSize) {
-            context.disconnect();
+            context.disconnect(PlayerDisconnectReason.POLICY_VIOLATION);
             return;
         }
 
