@@ -7,8 +7,6 @@ import com.github.mkorman9.game.server.TcpServerConfig;
 import com.github.mkorman9.game.service.PacketSender;
 import com.github.mkorman9.game.service.PlayerRegistry;
 import io.quarkus.scheduler.Scheduled;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,7 +16,6 @@ import java.util.Random;
 
 @ApplicationScoped
 public class HeartbeatJob {
-    private static final Logger LOG = LoggerFactory.getLogger(HeartbeatJob.class);
     private static final Random RANDOM = new Random();
 
     @Inject
@@ -64,7 +61,6 @@ public class HeartbeatJob {
     }
 
     private static void failedSend(PlayerContext context, Throwable t) {
-        LOG.error("Heartbeat request failed for player {}", context.getUserInfo().getName(), t);
         context.disconnect(PlayerDisconnectReason.TIMEOUT);
     }
 }
