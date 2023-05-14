@@ -49,8 +49,7 @@ public class LoginController {
                 response.getUserName()
         );
 
-        context.setUserName(response.getUserName());
-        context.setUserId(response.getUserId());
+        context.setUserInfo(new UserInfo(response.getUserId(), response.getUserName()));
         context.setState(ConnectionState.PLAY);
 
         sender.send(context, new LoginSuccessResponsePacket(Instant.now(), response.getRoles()));

@@ -68,7 +68,7 @@ public class HeartbeatJob {
     }
 
     private static void failedSend(PlayerContext context, Throwable t) {
-        LOG.error("Heartbeat request failed for player {}", context.getUserId(), t);
+        LOG.error("Heartbeat request failed for player {}", context.getUserInfo().getName(), t);
         context.disconnect(PlayerDisconnectReason.TIMEOUT);
     }
 }

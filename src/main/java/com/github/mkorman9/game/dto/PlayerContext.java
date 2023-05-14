@@ -19,9 +19,7 @@ public class PlayerContext {
 
     private ConnectionState state;
 
-    private String userName;
-
-    private UUID userId;
+    private UserInfo userInfo;
 
     private HeartbeatInfo heartbeatInfo;
 

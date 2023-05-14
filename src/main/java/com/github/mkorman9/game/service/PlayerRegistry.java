@@ -38,8 +38,13 @@ public class PlayerRegistry {
     }
 
     public void unregister(PlayerContext context) {
-        if (clients.remove(context.getConnectionId()) != null) {
-            LOG.info("Player {} disconnected: {}", context.getUserName(), context.getDisconnectReason().get());
+        var removedAny = clients.remove(context.getConnectionId()) != null;
+        if (removedAny && context.getState() == ConnectionState.PLAY) {
+            LOG.info(
+                    "Player {} disconnected: {}",
+                    context.getUserInfo().getName(),
+                    context.getDisconnectReason().get()
+            );
         }
     }
 
