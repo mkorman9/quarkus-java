@@ -45,7 +45,7 @@ public class HeartbeatJob {
 
             packetSender.send(context, request)
                     .onSuccess(v -> successfulSend(context))
-                    .onFailure(t -> context.disconnect(PlayerDisconnectReason.TIMEOUT));
+                    .onFailure(t -> context.disconnect(PlayerDisconnectReason.PEER_RESET));
         });
     }
 
