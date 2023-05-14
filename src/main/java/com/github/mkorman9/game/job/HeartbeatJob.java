@@ -45,7 +45,7 @@ public class HeartbeatJob {
 
             packetSender.send(context, request)
                     .onSuccess(v -> successfulSend(context))
-                    .onFailure(t -> failedSend(context, t));
+                    .onFailure(t -> context.disconnect(PlayerDisconnectReason.TIMEOUT));
         });
     }
 
@@ -58,9 +58,5 @@ public class HeartbeatJob {
 
     private void successfulSend(PlayerContext context) {
         context.getHeartbeatInfo().getLastSent().set(Instant.now());
-    }
-
-    private static void failedSend(PlayerContext context, Throwable t) {
-        context.disconnect(PlayerDisconnectReason.TIMEOUT);
     }
 }
