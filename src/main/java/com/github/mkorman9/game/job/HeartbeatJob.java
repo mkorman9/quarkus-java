@@ -10,7 +10,6 @@ import io.quarkus.scheduler.Scheduled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.Duration;
@@ -28,13 +27,10 @@ public class HeartbeatJob {
     @Inject
     PacketSender packetSender;
 
+    private final Duration heartbeatTimeout;
+
     @Inject
-    TcpServerConfig config;
-
-    private Duration heartbeatTimeout;
-
-    @PostConstruct
-    public void setup() {
+    public HeartbeatJob(TcpServerConfig config) {
         this.heartbeatTimeout = Duration.parse("PT" + config.heartbeatTimeout());
     }
 
