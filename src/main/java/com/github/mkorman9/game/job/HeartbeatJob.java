@@ -10,6 +10,7 @@ import io.quarkus.scheduler.Scheduled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.Duration;
@@ -30,7 +31,14 @@ public class HeartbeatJob {
     @Inject
     TcpServerConfig config;
 
-    @Scheduled(every = "${tcp.server.heartbeat-interval}s")
+    private Duration heartbeatTimeout;
+
+    @PostConstruct
+    public void setup() {
+        this.heartbeatTimeout = Duration.parse("PT" + config.heartbeatTimeout());
+    }
+
+    @Scheduled(every = "${tcp.server.heartbeat-interval}")
     public void sendHeartbeats() {
         playerRegistry.forEachInPlay(context -> {
             if (shouldBeDisconnected(context)) {
@@ -50,7 +58,7 @@ public class HeartbeatJob {
 
     private boolean shouldBeDisconnected(PlayerContext context) {
         var lastResponse = context.getHeartbeatInfo().getLastResponse().get();
-        var deadline = Instant.now().minus(Duration.ofSeconds(config.heartbeatTimeout()));
+        var deadline = Instant.now().minus(heartbeatTimeout);
 
         return lastResponse.isBefore(deadline);
     }

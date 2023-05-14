@@ -14,7 +14,7 @@ public interface TcpServerConfig {
 
     int maxPacketSize();
 
-    int heartbeatInterval();
+    String heartbeatInterval();
 
-    int heartbeatTimeout();
+    String heartbeatTimeout();
 }
