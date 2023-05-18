@@ -54,12 +54,13 @@ public class TcpPeer {
         this.maxPacketSize = maxPacketSize;
     }
 
-    public void start() {
+    public void handle() {
         context = playerRegistry.register(socket);
 
         socket.handler(this::onChunk)
                 .closeHandler(v -> onClose())
-                .exceptionHandler(this::onException);
+                .exceptionHandler(this::onException)
+                .resume();
     }
 
     private void onChunk(Buffer chunk) {
