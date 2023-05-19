@@ -7,6 +7,7 @@ import com.github.mkorman9.game.service.PacketDispatcher;
 import com.github.mkorman9.game.service.PlayerRegistry;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +32,8 @@ import java.net.SocketException;
  * Packet Length and Packet ID are represented by Variable Length Quantity (see {@link VarInt}).
  * Payload content is dependent on the value of Packet ID.
 */
+@Slf4j
 public class TcpPeer {
-    private static final Logger LOG = LoggerFactory.getLogger(TcpPeer.class);
-
     private final NetSocket socket;
     private final PacketDispatcher packetDispatcher;
     private final PlayerRegistry playerRegistry;
@@ -109,6 +109,6 @@ public class TcpPeer {
             }
         }
 
-        LOG.error("Error in TCP connection handler", t);
+        log.error("Error in TCP connection handler", t);
     }
 }

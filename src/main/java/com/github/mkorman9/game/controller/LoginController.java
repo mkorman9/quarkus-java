@@ -6,17 +6,15 @@ import com.github.mkorman9.game.dto.packet.login.LoginPacket;
 import com.github.mkorman9.game.dto.packet.login.LoginSuccessResponsePacket;
 import com.github.mkorman9.game.service.PacketSender;
 import io.vertx.core.eventbus.EventBus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.Instant;
 
 @ApplicationScoped
+@Slf4j
 public class LoginController {
-    private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
-
     @Inject
     PacketSender sender;
 
@@ -28,14 +26,14 @@ public class LoginController {
         eventBus.<TokenVerificationResponse>request(TokenVerificationRequest.NAME, request)
                 .onSuccess(m -> performLogin(context, m.body()))
                 .onFailure(t -> {
-                    LOG.error("Error while verifying token", t);
+                    log.error("Error while verifying token", t);
                     context.disconnect(PlayerDisconnectReason.SERVER_ERROR);
                 });
     }
 
     private void performLogin(PlayerContext context, TokenVerificationResponse response) {
         if (!response.isVerified()) {
-            LOG.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
+            log.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
 
             sender.send(context, new LoginFailedResponsePacket("Login Failed"))
                     .onSuccess(v -> context.disconnect(PlayerDisconnectReason.LOGIN_FAILED));
@@ -43,7 +41,7 @@ public class LoginController {
             return;
         }
 
-        LOG.info(
+        log.info(
                 "{} logged in as {}",
                 context.getSocket().remoteAddress().hostAddress(),
                 response.getUserName()

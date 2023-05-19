@@ -8,8 +8,7 @@ import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.TokenService;
 import com.github.mkorman9.security.auth.service.UserService;
 import io.quarkus.vertx.ConsumeEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -21,8 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint(value = "/user/events")
 @ApplicationScoped
+@Slf4j
 public class UserEventsSocket {
-    private static final Logger LOG = LoggerFactory.getLogger(UserEventsSocket.class);
     private static final String TOKEN_URL_PARAM = "token";
 
     @Inject
@@ -47,24 +46,24 @@ public class UserEventsSocket {
         var user = maybeUser.get();
         connections.put(session.getId(), new UserEventsSocketConnection(session, user));
 
-        LOG.info("{} connected as {}", user.getName(), session.getId());
+        log.info("{} connected as {}", user.getName(), session.getId());
     }
 
     @OnClose
     public void onClose(Session session) {
         connections.remove(session.getId());
 
-        LOG.info("{} disconnected", session.getId());
+        log.info("{} disconnected", session.getId());
     }
 
     @OnError
     public void onError(Session session, Throwable t) {
-        LOG.info("{} encountered error: {}", session.getId(), t.getMessage());
+        log.info("{} encountered error: {}", session.getId(), t.getMessage());
     }
 
     @OnMessage
     public void onMessage(Session session, String message) {
-        LOG.info("{} sent message: {}", session.getId(), message);
+        log.info("{} sent message: {}", session.getId(), message);
     }
 
     @ConsumeEvent(UserEvent.NAME)
@@ -101,7 +100,7 @@ public class UserEventsSocket {
                     .getAsyncRemote()
                     .sendText(objectMapper.writeValueAsString(message));
         } catch (JsonProcessingException e) {
-            LOG.error("Failed to convert message to JSON", e);
+            log.error("Failed to convert message to JSON", e);
         }
     }
 }

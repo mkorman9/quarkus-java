@@ -9,17 +9,15 @@ import com.github.mkorman9.game.dto.packet.handshake.HandshakePacket;
 import com.github.mkorman9.game.dto.packet.login.LoginPacket;
 import com.github.mkorman9.game.dto.packet.play.HeartbeatResponse;
 import io.vertx.core.buffer.Buffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.io.IOException;
 
 @ApplicationScoped
+@Slf4j
 public class PacketDispatcher {
-    private static final Logger LOG = LoggerFactory.getLogger(PacketDispatcher.class);
-
     @Inject
     ObjectMapper objectMapper;
 
@@ -40,7 +38,7 @@ public class PacketDispatcher {
                 case PLAY -> handlePlay(context, packetId, payload);
             }
         } catch (Exception e) {
-            LOG.error("Uncaught exception in TCP packet dispatcher", e);
+            log.error("Uncaught exception in TCP packet dispatcher", e);
         }
     }
 

@@ -5,16 +5,14 @@ import io.vertx.core.Promise;
 import io.vertx.core.net.NetServer;
 import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.NetSocket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
+@Slf4j
 public class TcpServerVerticle extends AbstractVerticle {
-    private static final Logger LOG = LoggerFactory.getLogger(TcpServerStarter.class);
-
     @Inject
     TcpServerConfig config;
 
@@ -31,15 +29,15 @@ public class TcpServerVerticle extends AbstractVerticle {
 
         server = vertx.createNetServer(options)
                 .connectHandler(this::onConnect)
-                .exceptionHandler(t -> LOG.error("Exception inside TCP server", t));
+                .exceptionHandler(t -> log.error("Exception inside TCP server", t));
 
         server.listen(config.port(), config.host())
                 .onSuccess(s -> {
-                    LOG.info("Started TCP server");
+                    log.info("Started TCP server");
                     promise.complete();
                 })
                 .onFailure(t -> {
-                    LOG.error("Failed to start TCP server", t);
+                    log.error("Failed to start TCP server", t);
                     promise.fail(t);
                 });
     }
@@ -48,11 +46,11 @@ public class TcpServerVerticle extends AbstractVerticle {
     public void stop(Promise<Void> promise) {
         server.close()
                 .onSuccess(v -> {
-                    LOG.info("Stopped TCP server");
+                    log.info("Stopped TCP server");
                     promise.complete();
                 })
                 .onFailure(t -> {
-                    LOG.error("Failed to stop TCP server", t);
+                    log.error("Failed to stop TCP server", t);
                     promise.fail(t);
                 });
     }

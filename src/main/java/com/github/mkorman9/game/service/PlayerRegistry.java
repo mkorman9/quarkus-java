@@ -3,8 +3,7 @@ package com.github.mkorman9.game.service;
 import com.github.mkorman9.game.dto.ConnectionState;
 import com.github.mkorman9.game.dto.PlayerContext;
 import io.vertx.core.net.NetSocket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.UUID;
@@ -12,8 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 @ApplicationScoped
+@Slf4j
 public class PlayerRegistry {
-    private static final Logger LOG = LoggerFactory.getLogger(PlayerRegistry.class);
 
     private final ConcurrentHashMap<UUID, PlayerContext> clients = new ConcurrentHashMap<>();
 
@@ -34,7 +33,7 @@ public class PlayerRegistry {
     public void unregister(PlayerContext context) {
         var removedAny = clients.remove(context.getConnectionId()) != null;
         if (removedAny && context.getState() == ConnectionState.PLAY) {
-            LOG.info(
+            log.info(
                     "Player {} disconnected: {}",
                     context.getUserInfo().getName(),
                     context.getDisconnectReason().get()

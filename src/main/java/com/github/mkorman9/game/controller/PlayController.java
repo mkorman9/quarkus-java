@@ -3,8 +3,7 @@ package com.github.mkorman9.game.controller;
 import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.packet.play.HeartbeatResponse;
 import com.github.mkorman9.game.service.PacketSender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -12,9 +11,8 @@ import java.time.Duration;
 import java.time.Instant;
 
 @ApplicationScoped
+@Slf4j
 public class PlayController {
-    private static final Logger LOG = LoggerFactory.getLogger(PlayController.class);
-
     @Inject
     PacketSender sender;
 

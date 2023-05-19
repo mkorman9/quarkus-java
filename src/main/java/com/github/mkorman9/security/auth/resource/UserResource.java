@@ -8,9 +8,8 @@ import com.github.mkorman9.security.auth.model.User;
 import com.github.mkorman9.security.auth.service.TokenService;
 import com.github.mkorman9.security.auth.service.UserService;
 import io.smallrye.common.annotation.Blocking;
+import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.reactive.RestPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -27,9 +26,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Path("/user")
+@Slf4j
 public class UserResource {
-    private static final Logger LOG = LoggerFactory.getLogger(UserResource.class);
-
     @Inject
     UserService userService;
 
@@ -51,7 +49,7 @@ public class UserResource {
         var securityPrincipal = (JwtTokenPrincipal) securityContext.getUserPrincipal();
 
         var user = userService.addUser(name);
-        LOG.info("{} has added new user: {}", securityPrincipal.getName(), name);
+        log.info("{} has added new user: {}", securityPrincipal.getName(), name);
 
         return user.getId();
     }
@@ -65,7 +63,7 @@ public class UserResource {
 
         try {
             userService.assignRole(id, request.getRole());
-            LOG.info("{} has added new role {} to user: {}", securityPrincipal.getName(), request.getRole(), id);
+            log.info("{} has added new role {} to user: {}", securityPrincipal.getName(), request.getRole(), id);
         } catch (UserNotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RoleAlreadyAssignedException e) {
