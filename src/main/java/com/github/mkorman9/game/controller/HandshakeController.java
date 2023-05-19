@@ -5,6 +5,7 @@ import com.github.mkorman9.game.dto.PlayerContext;
 import com.github.mkorman9.game.dto.packet.handshake.HandshakePacket;
 import com.github.mkorman9.game.dto.packet.handshake.HandshakeResponsePacket;
 import com.github.mkorman9.game.service.PacketSender;
+import com.github.mkorman9.game.service.PlayerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,9 @@ public class HandshakeController {
     @Inject
     PacketSender sender;
 
+    @Inject
+    PlayerRegistry playerRegistry;
+
     public void onHandshake(PlayerContext context, HandshakePacket packet) {
         LOG.info(
                 "Connected from: {}, device: {}, client version: {}",
@@ -27,6 +31,6 @@ public class HandshakeController {
         );
 
         context.setState(ConnectionState.LOGIN);
-        sender.send(context, new HandshakeResponsePacket(1, "1.0.0"));
+        sender.send(context, new HandshakeResponsePacket(playerRegistry.getInPlayCount(), "1.0.0"));
     }
 }
