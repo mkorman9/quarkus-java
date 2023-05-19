@@ -31,6 +31,6 @@ public class HandshakeController {
         );
 
         context.setState(ConnectionState.LOGIN);
-        sender.send(context, new HandshakeResponsePacket(playerRegistry.getInPlayCount(), "1.0.0"));
+        sender.send(context, new HandshakeResponsePacket(playerRegistry.countInPlay(), "1.0.0"));
     }
 }

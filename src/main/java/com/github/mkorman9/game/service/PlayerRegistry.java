@@ -56,7 +56,7 @@ public class PlayerRegistry {
         });
     }
 
-    public int getInPlayCount() {
+    public int countInPlay() {
         return clients.reduceValuesToInt(
                 Long.MAX_VALUE,
                 ctx -> ctx.getState() == ConnectionState.PLAY ? 1 : 0,
