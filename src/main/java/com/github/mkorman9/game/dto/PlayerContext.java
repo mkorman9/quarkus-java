@@ -8,20 +8,25 @@ import lombok.Data;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.github.mkorman9.game.dto.PlayerDisconnectReason.PEER_RESET;
+
 @Data
 @Builder
 public class PlayerContext {
     private UUID connectionId;
 
-    private AtomicReference<PlayerDisconnectReason> disconnectReason;
+    @Builder.Default
+    private AtomicReference<PlayerDisconnectReason> disconnectReason = new AtomicReference<>(PEER_RESET);
 
     private NetSocket socket;
 
-    private ConnectionState state;
+    @Builder.Default
+    private ConnectionState state = ConnectionState.HANDSHAKE;
 
     private UserInfo userInfo;
 
-    private HeartbeatInfo heartbeatInfo;
+    @Builder.Default
+    private HeartbeatInfo heartbeatInfo = new HeartbeatInfo();
 
     public Future<Void> disconnect() {
         return socket.close();

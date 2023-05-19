@@ -1,9 +1,7 @@
 package com.github.mkorman9.game.service;
 
 import com.github.mkorman9.game.dto.ConnectionState;
-import com.github.mkorman9.game.dto.HeartbeatInfo;
 import com.github.mkorman9.game.dto.PlayerContext;
-import com.github.mkorman9.game.dto.PlayerDisconnectReason;
 import io.vertx.core.net.NetSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 @ApplicationScoped
@@ -24,10 +21,7 @@ public class PlayerRegistry {
         var connectionId = UUID.randomUUID();
         var context = PlayerContext.builder()
                 .connectionId(connectionId)
-                .disconnectReason(new AtomicReference<>(PlayerDisconnectReason.PEER_RESET))
                 .socket(socket)
-                .state(ConnectionState.HANDSHAKE)
-                .heartbeatInfo(new HeartbeatInfo())
                 .build();
 
         if (clients.putIfAbsent(connectionId, context) != null) {
