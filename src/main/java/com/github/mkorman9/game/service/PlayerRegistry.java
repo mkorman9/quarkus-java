@@ -48,12 +48,6 @@ public class PlayerRegistry {
         }
     }
 
-    public void forEach(Consumer<PlayerContext> consumer) {
-        clients.forEach((cid, context) -> {
-            consumer.accept(context);
-        });
-    }
-
     public void forEachInPlay(Consumer<PlayerContext> consumer) {
         clients.forEach((cid, context) -> {
             if (context.getState() == ConnectionState.PLAY) {
