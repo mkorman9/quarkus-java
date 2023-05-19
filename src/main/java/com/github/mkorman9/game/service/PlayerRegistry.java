@@ -13,7 +13,6 @@ import java.util.function.Consumer;
 @ApplicationScoped
 @Slf4j
 public class PlayerRegistry {
-
     private final ConcurrentHashMap<UUID, PlayerContext> clients = new ConcurrentHashMap<>();
 
     public PlayerContext register(NetSocket socket) {
