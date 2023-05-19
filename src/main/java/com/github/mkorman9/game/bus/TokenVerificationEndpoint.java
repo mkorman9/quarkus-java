@@ -1,4 +1,4 @@
-package com.github.mkorman9.game.listener;
+package com.github.mkorman9.game.bus;
 
 import com.github.mkorman9.game.dto.TokenVerificationRequest;
 import com.github.mkorman9.game.dto.TokenVerificationResponse;
@@ -11,7 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class TokenVerificationListener {
+public class TokenVerificationEndpoint {
     @Inject
     TokenService tokenService;
 
