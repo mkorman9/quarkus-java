@@ -8,8 +8,6 @@ import com.github.mkorman9.game.service.PlayerRegistry;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetSocket;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.SocketException;
 
