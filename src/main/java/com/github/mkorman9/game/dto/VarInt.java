@@ -40,8 +40,7 @@ public class VarInt {
         byte length = 1;
 
         while (true) {
-            byte current = source.getByte(index);
-            index++;
+            byte current = source.getByte(index++);
             value |= (current & SEGMENT_BITS) << offset;
 
             if ((current & CONTINUE_BIT) == 0) {
