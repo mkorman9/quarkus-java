@@ -21,10 +21,11 @@ public class VarInt {
 
     public static VarInt of(int value) {
         byte length = 1;
+        var v = value;
 
-        while ((value & ~SEGMENT_BITS) != 0) {
+        while ((v & ~SEGMENT_BITS) != 0) {
             length++;
-            value >>>= 7;
+            v >>>= 7;
         }
 
         return new VarInt(value, length);
