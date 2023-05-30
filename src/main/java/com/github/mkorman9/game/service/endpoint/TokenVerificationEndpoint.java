@@ -1,4 +1,4 @@
-package com.github.mkorman9.game.bus;
+package com.github.mkorman9.game.service.endpoint;
 
 import com.github.mkorman9.game.dto.TokenVerificationRequest;
 import com.github.mkorman9.game.dto.TokenVerificationResponse;
