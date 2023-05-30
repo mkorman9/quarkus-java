@@ -22,7 +22,7 @@ public class HandshakeController {
 
     public void onHandshake(PlayerContext context, HandshakePacket packet) {
         log.info(
-                "Connected from: {}, device: {}, client version: {}",
+                "Received handshake from: {}, device: {}, client version: {}",
                 context.getSocket().remoteAddress().hostAddress(),
                 packet.getDevice(),
                 packet.getClientVersion()

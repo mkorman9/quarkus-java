@@ -26,17 +26,27 @@ public class PlayerRegistry {
             return register(socket);
         }
 
+        log.info("Player connected from {}", context.getSocket().remoteAddress().hostAddress());
+
         return context;
     }
 
     public void unregister(PlayerContext context) {
         var removedAny = clients.remove(context.getConnectionId()) != null;
-        if (removedAny && context.getState() == ConnectionState.PLAY) {
-            log.info(
-                    "Player {} disconnected: {}",
-                    context.getUserInfo().getName(),
-                    context.getDisconnectReason().get()
-            );
+        if (removedAny) {
+            if (context.getState() == ConnectionState.PLAY) {
+                log.info(
+                        "Player {} disconnected while in game: {}",
+                        context.getUserInfo().getName(),
+                        context.getDisconnectReason().get()
+                );
+            } else {
+                log.info(
+                        "Player using {} disconnected: {}",
+                        context.getSocket().remoteAddress().hostAddress(),
+                        context.getDisconnectReason().get()
+                );
+            }
         }
     }
 

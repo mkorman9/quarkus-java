@@ -33,7 +33,7 @@ public class LoginController {
 
     private void performLogin(PlayerContext context, TokenVerificationResponse response) {
         if (!response.isVerified()) {
-            log.info("{} login failed", context.getSocket().remoteAddress().hostAddress());
+            log.info("Login failed for {}", context.getSocket().remoteAddress().hostAddress());
 
             sender.send(context, new LoginFailedResponsePacket("Login Failed"))
                     .onSuccess(v -> context.disconnect(PlayerDisconnectReason.LOGIN_FAILED));
