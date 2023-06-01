@@ -4,8 +4,8 @@ import com.github.mkorman9.game.service.PacketDispatcher;
 import com.github.mkorman9.game.service.PlayerRegistry;
 import io.vertx.core.net.NetSocket;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class TcpPeerFactory {

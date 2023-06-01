@@ -1,11 +1,11 @@
 package com.github.mkorman9.core.service;
 
 import com.github.mkorman9.security.auth.model.User;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.util.UUID;
 
 @ApplicationScoped

@@ -8,8 +8,8 @@ import com.github.mkorman9.game.service.PacketSender;
 import com.github.mkorman9.game.service.PlayerRegistry;
 import io.quarkus.scheduler.Scheduled;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Random;

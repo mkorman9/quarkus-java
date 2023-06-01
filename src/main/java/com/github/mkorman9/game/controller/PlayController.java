@@ -5,8 +5,8 @@ import com.github.mkorman9.game.dto.packet.play.HeartbeatResponse;
 import com.github.mkorman9.game.service.PacketSender;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 

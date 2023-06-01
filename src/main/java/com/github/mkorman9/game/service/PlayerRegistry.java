@@ -5,7 +5,7 @@ import com.github.mkorman9.game.dto.PlayerContext;
 import io.vertx.core.net.NetSocket;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;

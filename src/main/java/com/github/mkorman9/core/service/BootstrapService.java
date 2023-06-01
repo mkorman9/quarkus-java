@@ -2,11 +2,10 @@ package com.github.mkorman9.core.service;
 
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 
 @ApplicationScoped
 @Slf4j

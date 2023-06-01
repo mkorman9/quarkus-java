@@ -7,8 +7,8 @@ import com.github.mkorman9.security.auth.dto.JwtTokenPrincipal;
 import com.github.mkorman9.security.auth.model.User;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;

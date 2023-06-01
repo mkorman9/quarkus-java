@@ -2,6 +2,8 @@
 
 ## Build
 
+NOTE: Building requires JDK 19
+     
 ```shell
 ./gradlew build
 

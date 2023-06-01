@@ -8,11 +8,11 @@ import com.github.mkorman9.security.auth.model.UserRole;
 import io.vertx.core.eventbus.EventBus;
 import org.hibernate.exception.ConstraintViolationException;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.transaction.Transactional;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;

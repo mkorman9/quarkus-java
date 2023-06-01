@@ -7,8 +7,8 @@ import io.vertx.core.net.NetServerOptions;
 import io.vertx.core.net.NetSocket;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 @Slf4j

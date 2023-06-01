@@ -2,11 +2,11 @@ package com.github.mkorman9.game.server;
 
 import io.quarkus.runtime.StartupEvent;
 import io.vertx.core.Vertx;
+import jakarta.enterprise.event.Observes;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 @Slf4j

@@ -8,8 +8,8 @@ import com.github.mkorman9.game.dto.packet.Sendable;
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class PacketSender {

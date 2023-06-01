@@ -10,10 +10,10 @@ import com.github.mkorman9.security.auth.service.UserService;
 import io.quarkus.vertx.ConsumeEvent;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.websocket.*;
-import javax.websocket.server.ServerEndpoint;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.websocket.*;
+import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;

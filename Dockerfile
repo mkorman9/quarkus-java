@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:19-jre
 
 RUN addgroup --system --gid=9999 runner && \
     adduser --system --uid=9999 --gid=9999 --home /deployments --disabled-password runner

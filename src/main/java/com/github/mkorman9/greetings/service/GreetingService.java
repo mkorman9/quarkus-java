@@ -3,7 +3,7 @@ package com.github.mkorman9.greetings.service;
 import com.github.mkorman9.greetings.dto.Greetings;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class GreetingService {

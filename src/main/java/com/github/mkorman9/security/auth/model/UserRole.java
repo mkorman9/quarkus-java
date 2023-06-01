@@ -3,7 +3,7 @@ package com.github.mkorman9.security.auth.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="user_roles")

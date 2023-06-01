@@ -3,9 +3,9 @@ package com.github.mkorman9.greetings.resource;
 import com.github.mkorman9.greetings.dto.Greetings;
 import com.github.mkorman9.greetings.service.GreetingService;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @Path("/hello")
 public class GreetingResource {
