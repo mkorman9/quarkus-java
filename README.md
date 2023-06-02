@@ -2,7 +2,7 @@
 
 ## Build
 
-NOTE: Building requires JDK 19
+NOTE: Building requires JDK 17
      
 ```shell
 ./gradlew build
