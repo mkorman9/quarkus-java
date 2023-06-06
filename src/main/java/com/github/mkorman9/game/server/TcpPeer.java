@@ -74,7 +74,7 @@ public class TcpPeer {
                 var declaredPacketSize = VarInt.read(receiveBuffer);
                 var receivedPacketSize = receiveBuffer.length() - declaredPacketSize.getLength();
 
-                if (receivedPacketSize >= declaredPacketSize.getValue()) {
+                if (declaredPacketSize.getValue() > 0 && receivedPacketSize >= declaredPacketSize.getValue()) {
                     var packetId = VarInt.read(receiveBuffer, declaredPacketSize.getLength());
                     var payload = Buffer.buffer(receiveBuffer.getByteBuf().slice(
                             declaredPacketSize.getLength() + packetId.getLength(),
