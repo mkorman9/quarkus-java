@@ -62,6 +62,6 @@ public class TcpServerVerticle extends AbstractVerticle {
     private void onConnect(NetSocket socket) {
         socket.pause();
         var peer = tcpPeerFactory.create(socket);
-        peer.handle();
+        peer.start();
     }
 }

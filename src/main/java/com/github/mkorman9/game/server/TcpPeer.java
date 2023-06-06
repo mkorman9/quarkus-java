@@ -52,7 +52,7 @@ public class TcpPeer {
         this.maxPacketSize = maxPacketSize;
     }
 
-    public void handle() {
+    public void start() {
         context = playerRegistry.register(socket);
 
         socket.handler(this::onChunk)
