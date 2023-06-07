@@ -33,7 +33,7 @@ public class TokenVerificationService {
 
     @ConsumeEvent(CHANNEL)
     @Blocking
-    public TokenVerificationResponse onTokenVerificationRequest(TokenVerificationRequest request) {
+    TokenVerificationResponse onTokenVerificationRequest(TokenVerificationRequest request) {
         var maybeToken = tokenService.verifyToken(request.token());
         if (maybeToken.isEmpty()) {
             return TokenVerificationResponse.builder()
