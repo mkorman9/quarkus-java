@@ -1,4 +1,4 @@
-package com.github.mkorman9.game.service.endpoint;
+package com.github.mkorman9.game.service;
 
 import com.github.mkorman9.game.dto.TokenVerificationRequest;
 import com.github.mkorman9.game.dto.TokenVerificationResponse;
@@ -7,18 +7,31 @@ import com.github.mkorman9.security.auth.service.UserService;
 import io.quarkus.vertx.ConsumeEvent;
 import io.smallrye.common.annotation.Blocking;
 
+import io.vertx.core.Future;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.eventbus.Message;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class TokenVerificationEndpoint {
+public class TokenVerificationService {
+    private static final String CHANNEL = "token-verification";
+
     @Inject
     TokenService tokenService;
 
     @Inject
     UserService userService;
 
-    @ConsumeEvent(TokenVerificationRequest.NAME)
+    @Inject
+    EventBus eventBus;
+
+    public Future<TokenVerificationResponse> verifyToken(TokenVerificationRequest request) {
+        return eventBus.<TokenVerificationResponse>request(CHANNEL, request)
+                .map(Message::body);
+    }
+
+    @ConsumeEvent(CHANNEL)
     @Blocking
     public TokenVerificationResponse onTokenVerificationRequest(TokenVerificationRequest request) {
         var maybeToken = tokenService.verifyToken(request.token());

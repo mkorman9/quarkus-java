@@ -5,11 +5,11 @@ import com.github.mkorman9.game.dto.packet.login.LoginFailedResponsePacket;
 import com.github.mkorman9.game.dto.packet.login.LoginPacket;
 import com.github.mkorman9.game.dto.packet.login.LoginSuccessResponsePacket;
 import com.github.mkorman9.game.service.PacketSender;
-import io.vertx.core.eventbus.EventBus;
-import lombok.extern.slf4j.Slf4j;
-
+import com.github.mkorman9.game.service.TokenVerificationService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.Instant;
 
 @ApplicationScoped
@@ -19,12 +19,12 @@ public class LoginController {
     PacketSender sender;
 
     @Inject
-    EventBus eventBus;
+    TokenVerificationService tokenVerificationService;
 
     public void onLogin(PlayerContext context, LoginPacket packet) {
         var request = new TokenVerificationRequest(packet.getToken());
-        eventBus.<TokenVerificationResponse>request(TokenVerificationRequest.NAME, request)
-                .onSuccess(m -> performLogin(context, m.body()))
+        tokenVerificationService.verifyToken(request)
+                .onSuccess(r -> performLogin(context, r))
                 .onFailure(t -> {
                     log.error("Error while verifying token", t);
                     context.disconnect(PlayerDisconnectReason.SERVER_ERROR);
