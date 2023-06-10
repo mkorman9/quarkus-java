@@ -24,22 +24,24 @@ public class TokenAuthenticationInterceptor {
 
     @ServerRequestFilter(preMatching = true, priority = Priorities.AUTHORIZATION)
     public Uni<Void> intercept(ContainerRequestContext context) {
+        var maybeToken = extractToken(context);
+        if (maybeToken.isEmpty()) {
+            return Uni.createFrom().voidItem();
+        }
+
+        var token = maybeToken.get();
+
         return Uni.createFrom().emitter(consumer -> {
             ExecutorRecorder.getCurrent().execute(() -> {
                 try {
-                    verifyToken(context);
+                    tokenService.verifyToken(token)
+                            .ifPresent(t -> context.setSecurityContext(createSecurityContext(t)));
                     consumer.complete(null);
                 } catch (Exception e) {
                     consumer.fail(e);
                 }
             });
         });
-    }
-
-    private void verifyToken(ContainerRequestContext context) {
-        extractToken(context)
-                .flatMap(token -> tokenService.verifyToken(token))
-                .ifPresent(decoded -> context.setSecurityContext(createSecurityContext(decoded)));
     }
 
     public static Optional<String> extractToken(ContainerRequestContext context) {
