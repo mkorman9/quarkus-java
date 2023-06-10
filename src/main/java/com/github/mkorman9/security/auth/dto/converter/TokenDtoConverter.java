@@ -1,7 +1,7 @@
 package com.github.mkorman9.security.auth.dto.converter;
 
 import com.github.mkorman9.security.auth.dto.TokenDto;
-import com.github.mkorman9.security.auth.model.Token;
+import com.github.mkorman9.security.auth.entity.Token;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

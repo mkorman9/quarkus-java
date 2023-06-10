@@ -1,6 +1,6 @@
 package com.github.mkorman9.security.auth.dto;
 
-import com.github.mkorman9.security.auth.model.User;
+import com.github.mkorman9.security.auth.entity.User;
 
 import jakarta.websocket.Session;
 

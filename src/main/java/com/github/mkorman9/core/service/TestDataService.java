@@ -1,6 +1,6 @@
 package com.github.mkorman9.core.service;
 
-import com.github.mkorman9.security.auth.model.User;
+import com.github.mkorman9.security.auth.entity.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;

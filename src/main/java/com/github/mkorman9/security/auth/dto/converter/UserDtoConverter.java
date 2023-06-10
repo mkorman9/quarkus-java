@@ -1,8 +1,8 @@
 package com.github.mkorman9.security.auth.dto.converter;
 
 import com.github.mkorman9.security.auth.dto.UserDto;
-import com.github.mkorman9.security.auth.model.User;
-import com.github.mkorman9.security.auth.model.UserRole;
+import com.github.mkorman9.security.auth.entity.User;
+import com.github.mkorman9.security.auth.entity.UserRole;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.stream.Collectors;

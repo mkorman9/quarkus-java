@@ -1,4 +1,4 @@
-package com.github.mkorman9.security.auth.model;
+package com.github.mkorman9.security.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
