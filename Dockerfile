@@ -11,4 +11,8 @@ COPY --chown=runner:runner build/quarkus-app/quarkus/ /deployments/quarkus/
 USER runner
 WORKDIR /
 
+EXPOSE 8080
+EXPOSE 3333
+EXPOSE 7000
+
 CMD [ "java", "-jar", "/deployments/quarkus-run.jar" ]
