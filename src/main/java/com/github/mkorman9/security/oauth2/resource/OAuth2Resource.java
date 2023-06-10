@@ -1,12 +1,14 @@
 package com.github.mkorman9.security.oauth2.resource;
 
+import com.github.mkorman9.security.oauth2.dto.GithubUserInfo;
 import com.github.mkorman9.security.oauth2.service.GithubOAuth2Service;
-import org.jboss.resteasy.reactive.RestQuery;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
+import org.jboss.resteasy.reactive.RestQuery;
+
 import java.net.URI;
 
 @Path("/oauth2")
@@ -28,22 +30,16 @@ public class OAuth2Resource {
 
     @GET
     @Path("github/callback")
-    public Response githubCallback(
+    public GithubUserInfo githubCallback(
             @RestQuery String code,
             @RestQuery String state
     ) {
         var maybeAccessToken = githubOAuth2Service.retrieveAccessToken(code, state);
         if (maybeAccessToken.isEmpty()) {
-            return Response
-                    .status(Response.Status.FORBIDDEN)
-                    .build();
+            throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
 
         var accessToken = maybeAccessToken.get();
-        var userInfo = githubOAuth2Service.retrieveUserInfo(accessToken);
-
-        return Response
-                .ok(userInfo)
-                .build();
+        return githubOAuth2Service.retrieveUserInfo(accessToken);
     }
 }
