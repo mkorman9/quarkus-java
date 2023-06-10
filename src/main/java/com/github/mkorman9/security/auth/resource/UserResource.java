@@ -52,7 +52,7 @@ public class UserResource {
         var principal = (UserDto) securityContext.getUserPrincipal();
 
         var user = userService.addUser(name);
-        log.info("{} has added new user: {}", principal.getName(), name);
+        log.info("{} has added new user: {}", principal.getName(), user.getName());
 
         return user.getId();
     }
