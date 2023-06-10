@@ -1,10 +1,10 @@
-package com.github.mkorman9.security.auth.dto;
+package com.github.mkorman9.security.auth.resource.payload;
 
 import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 
 @Data
-public class AssignRoleRequest {
+public class AssignRolePayload {
     @NotBlank
     private String role;
 }

@@ -1,10 +1,10 @@
 package com.github.mkorman9.security.auth.resource;
 
-import com.github.mkorman9.security.auth.dto.AssignRoleRequest;
 import com.github.mkorman9.security.auth.dto.TokenIssueRequest;
+import com.github.mkorman9.security.auth.dto.UserDto;
 import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
 import com.github.mkorman9.security.auth.exception.UserNotFoundException;
-import com.github.mkorman9.security.auth.model.User;
+import com.github.mkorman9.security.auth.resource.payload.AssignRolePayload;
 import com.github.mkorman9.security.auth.service.TokenService;
 import com.github.mkorman9.security.auth.service.UserService;
 import io.smallrye.common.annotation.Blocking;
@@ -37,19 +37,19 @@ public class UserResource {
     @Inject
     TokenService tokenService;
 
-    @Context
-    SecurityContext securityContext;
-
     @GET
-    public List<User> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @POST
     @Path("{name}")
     @RolesAllowed({"ADMIN"})
-    public UUID addUser(@RestPath String name) {
-        var principal = (User) securityContext.getUserPrincipal();
+    public UUID addUser(
+            @RestPath String name,
+            @Context SecurityContext securityContext
+    ) {
+        var principal = (UserDto) securityContext.getUserPrincipal();
 
         var user = userService.addUser(name);
         log.info("{} has added new user: {}", principal.getName(), name);
@@ -61,12 +61,16 @@ public class UserResource {
     @Path("{id}/roles")
     @RolesAllowed({"ADMIN"})
     @Blocking
-    public void assignRole(@RestPath UUID id, @Valid @NotNull AssignRoleRequest request) {
-        var principal = (User) securityContext.getUserPrincipal();
+    public void assignRole(
+            @RestPath UUID id,
+            @Valid @NotNull AssignRolePayload payload,
+            @Context SecurityContext securityContext
+    ) {
+        var principal = (UserDto) securityContext.getUserPrincipal();
 
         try {
-            userService.assignRole(id, request.getRole());
-            log.info("{} has added new role {} to user: {}", principal.getName(), request.getRole(), id);
+            userService.assignRole(id, payload.getRole());
+            log.info("{} has added new role {} to user: {}", principal.getName(), payload.getRole(), id);
         } catch (UserNotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RoleAlreadyAssignedException e) {
@@ -81,16 +85,13 @@ public class UserResource {
             @Context HttpServerRequest request,
             @RestHeader("X-Device") Optional<String> deviceHeader
     ) {
-        var maybeUser = userService.getById(id);
-        if (maybeUser.isEmpty()) {
-            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
-        }
-        var tokenIssueRequest = new TokenIssueRequest();
-        tokenIssueRequest.setUserId(id);
-        tokenIssueRequest.setRemoteAddress(request.remoteAddress().hostAddress());
-        tokenIssueRequest.setDevice(deviceHeader.orElse(""));
+        var tokenRequest = TokenIssueRequest.builder()
+                .userId(id)
+                .remoteAddress(request.remoteAddress().hostAddress())
+                .device(deviceHeader.orElse(""))
+                .build();
 
-        var maybeToken = tokenService.issueToken(tokenIssueRequest);
+        var maybeToken = tokenService.issueToken(tokenRequest);
         if (maybeToken.isEmpty()) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }

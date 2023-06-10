@@ -1,6 +1,6 @@
 package com.github.mkorman9.security.auth.middleware;
 
-import com.github.mkorman9.security.auth.model.Token;
+import com.github.mkorman9.security.auth.dto.TokenDto;
 import com.github.mkorman9.security.auth.service.TokenService;
 import io.quarkus.runtime.ExecutorRecorder;
 import io.smallrye.mutiny.Uni;
@@ -60,9 +60,8 @@ public class TokenAuthenticationInterceptor {
         return Optional.of(headerParts[1]);
     }
 
-    private SecurityContext createSecurityContext(Token token) {
+    private SecurityContext createSecurityContext(TokenDto token) {
         var user = token.getUser();
-        var roles = user.getRolesSet();
 
         return new SecurityContext() {
             @Override
@@ -72,7 +71,7 @@ public class TokenAuthenticationInterceptor {
 
             @Override
             public boolean isUserInRole(String role) {
-                return roles.contains(role);
+                return user.getRoles().contains(role);
             }
 
             @Override

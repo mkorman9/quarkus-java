@@ -3,12 +3,16 @@ package com.github.mkorman9.security.auth.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
+import java.time.Instant;
 
 @Data
 @Builder
-public class TokenIssueRequest {
-    private UUID userId;
+public class TokenDto {
+    private String token;
+
+    private UserDto user;
+
+    private Instant issuedAt;
 
     private String remoteAddress;
 
