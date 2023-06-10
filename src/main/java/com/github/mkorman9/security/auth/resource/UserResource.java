@@ -4,7 +4,7 @@ import com.github.mkorman9.security.auth.dto.TokenIssueRequest;
 import com.github.mkorman9.security.auth.dto.UserDto;
 import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
 import com.github.mkorman9.security.auth.exception.UserNotFoundException;
-import com.github.mkorman9.security.auth.resource.payload.AssignRolePayload;
+import com.github.mkorman9.security.auth.dto.payload.AssignRolePayload;
 import com.github.mkorman9.security.auth.service.TokenService;
 import com.github.mkorman9.security.auth.service.UserService;
 import io.smallrye.common.annotation.Blocking;

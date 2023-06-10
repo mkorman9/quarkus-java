@@ -1,4 +1,4 @@
-package com.github.mkorman9.security.auth.resource.payload;
+package com.github.mkorman9.security.auth.dto.payload;
 
 import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
