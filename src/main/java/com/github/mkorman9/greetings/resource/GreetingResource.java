@@ -2,10 +2,11 @@ package com.github.mkorman9.greetings.resource;
 
 import com.github.mkorman9.greetings.dto.Greetings;
 import com.github.mkorman9.greetings.service.GreetingService;
-import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+
+import java.util.concurrent.CompletionStage;
 
 @Path("/hello")
 public class GreetingResource {
@@ -17,10 +18,8 @@ public class GreetingResource {
     }
 
     @GET
-    public Uni<Greetings> greet() {
-        return Uni.createFrom().completionStage(
-                greetingService.generate()
-                        .toCompletionStage()
-        );
+    public CompletionStage<Greetings> greet() {
+        return greetingService.generate()
+                .toCompletionStage();
     }
 }
