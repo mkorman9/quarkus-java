@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -17,8 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class User {
     @Id
-    @GeneratedValue
-    @UuidGenerator
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name="id")
     private UUID id;
 
