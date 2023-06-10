@@ -1,27 +1,16 @@
 package com.github.mkorman9.security.auth.resource;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mkorman9.security.auth.dto.UserEvent;
-import com.github.mkorman9.security.auth.dto.UserEventsSocketConnection;
-import com.github.mkorman9.security.auth.model.User;
-import com.github.mkorman9.security.auth.service.TokenService;
-import com.github.mkorman9.security.auth.service.UserService;
 import io.quarkus.vertx.ConsumeEvent;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 
 @ServerEndpoint(value = "/user/events")
 @ApplicationScoped
 @Slf4j
 public class UserEventsSocket {
+    /*
     private static final String TOKEN_URL_PARAM = "token";
 
     @Inject
@@ -102,5 +91,11 @@ public class UserEventsSocket {
         } catch (JsonProcessingException e) {
             log.error("Failed to convert message to JSON", e);
         }
+    }
+    */
+
+    @ConsumeEvent(UserEvent.NAME)
+    public void onUserEvent(UserEvent event) {
+        // left in order for codec for UserEvent to be registered
     }
 }

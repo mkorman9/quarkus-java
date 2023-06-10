@@ -41,14 +41,8 @@ public class TokenVerificationService {
                     .build();
         }
 
-        var token = maybeToken.get();
+        var user = maybeToken.get().getUser();
 
-        var maybeUser = userService.getById(token.getUserId());
-        if (maybeUser.isEmpty()) {
-            throw new IllegalStateException("Owner of valid token cannot be found");
-        }
-
-        var user = maybeUser.get();
         return TokenVerificationResponse.builder()
                 .verified(true)
                 .userId(user.getId())

@@ -1,55 +1,76 @@
 package com.github.mkorman9.security.auth.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.github.mkorman9.security.auth.dto.JwtTokenPrincipal;
-import com.github.mkorman9.security.auth.model.User;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
+import com.github.mkorman9.security.auth.dto.TokenIssueRequest;
+import com.github.mkorman9.security.auth.model.Token;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.time.Duration;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.transaction.Transactional;
+import lombok.SneakyThrows;
+
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Optional;
 
 @ApplicationScoped
 public class TokenService {
-    private static final String AUDIENCE = "quarkus-java";
-    private static final Duration TOKEN_DURATION = Duration.ofHours(1);
-
-    private final Algorithm algorithm;
-    private final JWTVerifier verifier;
+    private static final String TOKEN_CHARSET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final int TOKEN_LENGTH = 64;
+    private static final SecureRandom RANDOM = selectSecureRandom();
 
     @Inject
-    public TokenService(
-            @ConfigProperty(name="jwt.secret") String secret
-    ) {
-        this.algorithm = Algorithm.HMAC256(secret);
-        this.verifier = JWT.require(algorithm)
-                .withAudience(AUDIENCE)
-                .build();
-    }
+    EntityManager entityManager;
 
-    public Optional<JwtTokenPrincipal> verifyToken(String token) {
+    @Inject
+    UserService userService;
+
+    @Transactional
+    public Optional<Token> verifyToken(String token) {
         try {
-            var principal = new JwtTokenPrincipal(verifier.verify(token));
-            return Optional.of(principal);
-        } catch (Exception e) {
+            var result = entityManager
+                    .createQuery("from Token t where t.token = :token and t.isValid = true", Token.class)
+                    .setParameter("token", token)
+                    .getSingleResult();
+
+            return Optional.of(result);
+        } catch (NoResultException e) {
             return Optional.empty();
         }
     }
 
-    public String issueToken(User owner) {
-        var now = Instant.now();
+    @Transactional
+    public Optional<Token> issueToken(TokenIssueRequest request) {
+        var maybeUser = userService.getById(request.getUserId());
+        if (maybeUser.isEmpty()) {
+            return Optional.empty();
+        }
 
-        return JWT.create()
-                .withAudience(AUDIENCE)
-                .withSubject(owner.getId().toString())
-                .withClaim(JwtTokenPrincipal.NAME_CLAIM, owner.getName())
-                .withClaim(JwtTokenPrincipal.ROLES_CLAIM, owner.getRolesSet().stream().toList())
-                .withIssuedAt(now)
-                .withExpiresAt(now.plus(TOKEN_DURATION))
-                .sign(algorithm);
+        var token = new Token();
+        token.setToken(generateToken());
+        token.setUser(maybeUser.get());
+        token.setIssuedAt(Instant.now());
+        token.setRemoteAddress(request.getRemoteAddress());
+        token.setDevice(request.getDevice());
+        token.setValid(true);
+
+        entityManager.persist(token);
+        return Optional.of(token);
+    }
+
+    private String generateToken() {
+        return RANDOM.ints(TOKEN_LENGTH, 0, TOKEN_CHARSET.length())
+                .mapToObj(TOKEN_CHARSET::charAt)
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
+    }
+
+    @SneakyThrows
+    private static SecureRandom selectSecureRandom() {
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            return SecureRandom.getInstanceStrong();
+        } else {
+            return SecureRandom.getInstance("NativePRNGNonBlocking");
+        }
     }
 }

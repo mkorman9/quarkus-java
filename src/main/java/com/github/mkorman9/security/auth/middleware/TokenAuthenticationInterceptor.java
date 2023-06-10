@@ -1,21 +1,21 @@
 package com.github.mkorman9.security.auth.middleware;
 
-import com.github.mkorman9.security.auth.dto.JwtTokenPrincipal;
+import com.github.mkorman9.security.auth.model.Token;
 import com.github.mkorman9.security.auth.service.TokenService;
+import io.quarkus.runtime.ExecutorRecorder;
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.SecurityContext;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import java.security.Principal;
-import java.util.HashSet;
 import java.util.Optional;
 
 @ApplicationScoped
-public class JwtAuthInterceptor {
+public class TokenAuthenticationInterceptor {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String TOKEN_TYPE = "Bearer";
 
@@ -25,12 +25,21 @@ public class JwtAuthInterceptor {
     @ServerRequestFilter(preMatching = true, priority = Priorities.AUTHORIZATION)
     public Uni<Void> intercept(ContainerRequestContext context) {
         return Uni.createFrom().emitter(consumer -> {
-            extractToken(context)
-                    .flatMap(token -> tokenService.verifyToken(token))
-                    .ifPresent(decoded -> context.setSecurityContext(createSecurityContext(decoded)));
-
-            consumer.complete(null);
+            ExecutorRecorder.getCurrent().execute(() -> {
+                try {
+                    verifyToken(context);
+                    consumer.complete(null);
+                } catch (Exception e) {
+                    consumer.fail(e);
+                }
+            });
         });
+    }
+
+    private void verifyToken(ContainerRequestContext context) {
+        extractToken(context)
+                .flatMap(token -> tokenService.verifyToken(token))
+                .ifPresent(decoded -> context.setSecurityContext(createSecurityContext(decoded)));
     }
 
     public static Optional<String> extractToken(ContainerRequestContext context) {
@@ -49,14 +58,14 @@ public class JwtAuthInterceptor {
         return Optional.of(headerParts[1]);
     }
 
-    private SecurityContext createSecurityContext(JwtTokenPrincipal principal) {
-        var rolesRaw = principal.token().getClaim(JwtTokenPrincipal.ROLES_CLAIM).asList(String.class);
-        var roles = rolesRaw != null ? new HashSet<>(rolesRaw) : new HashSet<>();
+    private SecurityContext createSecurityContext(Token token) {
+        var user = token.getUser();
+        var roles = user.getRolesSet();
 
         return new SecurityContext() {
             @Override
             public Principal getUserPrincipal() {
-                return principal;
+                return user;
             }
 
             @Override

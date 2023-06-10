@@ -30,7 +30,6 @@ dependencies {
 
     implementation "io.netty:netty-transport-native-epoll::linux-x86_64"
     implementation 'com.github.scribejava:scribejava-apis:8.3.3'
-    implementation 'com.auth0:java-jwt:4.3.0'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
