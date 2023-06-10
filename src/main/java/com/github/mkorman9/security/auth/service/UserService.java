@@ -3,10 +3,10 @@ package com.github.mkorman9.security.auth.service;
 import com.github.mkorman9.security.auth.dto.UserDto;
 import com.github.mkorman9.security.auth.dto.UserEvent;
 import com.github.mkorman9.security.auth.dto.converter.UserDtoConverter;
-import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
-import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import com.github.mkorman9.security.auth.entity.User;
 import com.github.mkorman9.security.auth.entity.UserRole;
+import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
+import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -17,7 +17,6 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -30,16 +29,6 @@ public class UserService {
 
     @Inject
     UserDtoConverter userDtoConverter;
-
-    @Transactional
-    public Optional<UserDto> getById(UUID id) {
-        var user = entityManager.find(User.class, id);
-        if (user == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(userDtoConverter.convertToDto(user));
-    }
 
     @Transactional
     public List<UserDto> getAllUsers() {
