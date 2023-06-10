@@ -27,8 +27,6 @@ quarkus.datasource.password=password
 
 oauth2.github.clientId=01234567890
 oauth2.github.clientSecret=01234567890
-
-jwt.secret=0123456789012345678901234567890
 ```
 
 Create secret
