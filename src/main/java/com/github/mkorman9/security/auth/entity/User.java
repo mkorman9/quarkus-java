@@ -15,6 +15,8 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class User {
+    public static final String CONSTRAINT_UNIQUE_NAME = "unique_users_name";
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")

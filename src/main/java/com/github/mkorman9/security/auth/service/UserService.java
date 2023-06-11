@@ -5,13 +5,14 @@ import com.github.mkorman9.security.auth.dto.UserEvent;
 import com.github.mkorman9.security.auth.dto.converter.UserDtoConverter;
 import com.github.mkorman9.security.auth.entity.User;
 import com.github.mkorman9.security.auth.entity.UserRole;
+import com.github.mkorman9.security.auth.exception.NameAlreadyExistsException;
 import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import io.vertx.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.time.Instant;
 import java.util.List;
@@ -42,7 +43,17 @@ public class UserService {
         var user = new User();
         user.setName(name);
         user.setCreatedAt(Instant.now());
-        entityManager.persist(user);
+
+        try {
+            entityManager.persist(user);
+            entityManager.flush();
+        } catch (ConstraintViolationException e) {
+            if (e.getConstraintName().equals(User.CONSTRAINT_UNIQUE_NAME)) {
+                throw new NameAlreadyExistsException();
+            }
+
+            throw e;
+        }
 
         eventBus.publish(UserEvent.NAME, new UserEvent(user.getId(), Instant.now(), UserEvent.EventType.CREATED));
 
@@ -61,17 +72,6 @@ public class UserService {
         roleEntity.setRole(role);
         user.getRoles().add(roleEntity);
 
-        try {
-            entityManager.merge(user);
-            entityManager.flush();
-        } catch (PersistenceException e) {
-//            if (e.getCause() instanceof ConstraintViolationException violation) {
-//                if (violation.getConstraintName().equals(UserRole.UNIQUE_CONSTRAINT)) {
-//                    throw new RoleAlreadyAssignedException();
-//                }
-//            }
-
-            throw e;
-        }
+        entityManager.merge(user);
     }
 }

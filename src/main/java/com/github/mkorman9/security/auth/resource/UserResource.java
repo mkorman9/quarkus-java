@@ -2,9 +2,9 @@ package com.github.mkorman9.security.auth.resource;
 
 import com.github.mkorman9.security.auth.dto.TokenIssueRequest;
 import com.github.mkorman9.security.auth.dto.UserDto;
-import com.github.mkorman9.security.auth.exception.RoleAlreadyAssignedException;
-import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import com.github.mkorman9.security.auth.dto.payload.AssignRolePayload;
+import com.github.mkorman9.security.auth.exception.NameAlreadyExistsException;
+import com.github.mkorman9.security.auth.exception.UserNotFoundException;
 import com.github.mkorman9.security.auth.service.TokenService;
 import com.github.mkorman9.security.auth.service.UserService;
 import io.smallrye.common.annotation.Blocking;
@@ -51,10 +51,13 @@ public class UserResource {
     ) {
         var principal = (UserDto) securityContext.getUserPrincipal();
 
-        var user = userService.addUser(name);
-        log.info("{} has added new user: {}", principal.getName(), user.getName());
-
-        return user.getId();
+        try {
+            var user = userService.addUser(name);
+            log.info("{} has added new user: {}", principal.getName(), user.getName());
+            return user.getId();
+        } catch (NameAlreadyExistsException e) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
     }
 
     @POST
@@ -73,8 +76,6 @@ public class UserResource {
             log.info("{} has added new role {} to user: {}", principal.getName(), payload.getRole(), id);
         } catch (UserNotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
-        } catch (RoleAlreadyAssignedException e) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
     }
 

@@ -1,0 +1,4 @@
+package com.github.mkorman9.security.auth.exception;
+
+public class NameAlreadyExistsException extends RuntimeException {
+}
