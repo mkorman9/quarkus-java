@@ -7,27 +7,27 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 
 @Entity
-@Table(name="tokens")
+@Table(name = "tokens")
 @Data
 @NoArgsConstructor
 public class Token {
     @Id
-    @Column(name="token")
+    @Column(name = "token")
     private String token;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name="issued_at", nullable = false)
+    @Column(name = "issued_at", nullable = false)
     private Instant issuedAt;
 
-    @Column(name="remote_address", nullable = false)
+    @Column(name = "remote_address", nullable = false)
     private String remoteAddress;
 
-    @Column(name="device", nullable = false)
+    @Column(name = "device", nullable = false)
     private String device;
 
-    @Column(name="valid", nullable = false)
+    @Column(name = "valid", nullable = false)
     private boolean isValid;
 }
