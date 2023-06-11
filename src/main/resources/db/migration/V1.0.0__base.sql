@@ -5,12 +5,11 @@ CREATE TABLE users (
 );
 
 CREATE TABLE user_roles (
-    id      BIGSERIAL PRIMARY KEY,
     user_id UUID NOT NULL,
     role    TEXT NOT NULL,
 
-    CONSTRAINT user_roles_users_fk FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT user_roles_unique UNIQUE(user_id, role)
+    CONSTRAINT pk_user_roles UNIQUE(user_id, role),
+    CONSTRAINT fk_user_roles_users FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
 CREATE TABLE tokens (
@@ -21,5 +20,5 @@ CREATE TABLE tokens (
     device         TEXT NOT NULL,
     valid          BOOLEAN NOT NULL,
 
-    CONSTRAINT tokens_users_fk FOREIGN KEY(user_id) REFERENCES users(id)
+    CONSTRAINT fk_tokens_users FOREIGN KEY(user_id) REFERENCES users(id)
 );

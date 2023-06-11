@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,8 +26,7 @@ public class User {
     @Column(name="created_at")
     private Instant createdAt;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size=10)
-    private Set<UserRole> roles = new HashSet<>();
+    private List<UserRole> roles = new ArrayList<>();
 }
