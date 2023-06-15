@@ -49,13 +49,14 @@ public class TokenService {
             return Optional.empty();
         }
 
-        var token = new Token();
-        token.setToken(generateToken());
-        token.setUser(user);
-        token.setIssuedAt(Instant.now());
-        token.setRemoteAddress(request.getRemoteAddress());
-        token.setDevice(request.getDevice());
-        token.setValid(true);
+        var token = Token.builder()
+                .token(generateToken())
+                .owner(user)
+                .issuedAt(Instant.now())
+                .remoteAddress(request.getRemoteAddress())
+                .device(request.getDevice())
+                .isValid(true)
+                .build();
 
         entityManager.persist(token);
         return Optional.of(tokenDtoConverter.convertToDto(token));

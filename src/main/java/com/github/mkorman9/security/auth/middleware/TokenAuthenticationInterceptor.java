@@ -61,7 +61,7 @@ public class TokenAuthenticationInterceptor {
     }
 
     private SecurityContext createSecurityContext(TokenDto token) {
-        var user = token.getUser();
+        var user = token.getOwner();
 
         return new SecurityContext() {
             @Override

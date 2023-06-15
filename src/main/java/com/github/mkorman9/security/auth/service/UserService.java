@@ -40,9 +40,10 @@ public class UserService {
 
     @Transactional
     public UserDto addUser(String name) {
-        var user = new User();
-        user.setName(name);
-        user.setCreatedAt(Instant.now());
+        var user = User.builder()
+                .name(name)
+                .createdAt(Instant.now())
+                .build();
 
         try {
             entityManager.persist(user);
@@ -67,9 +68,10 @@ public class UserService {
             throw new UserNotFoundException();
         }
 
-        var roleEntity = new UserRole();
-        roleEntity.setUser(user);
-        roleEntity.setRole(role);
+        var roleEntity = UserRole.builder()
+                .user(user)
+                .role(role)
+                .build();
         user.getRoles().add(roleEntity);
 
         entityManager.merge(user);

@@ -36,7 +36,7 @@ public class TokenVerificationService {
                     .build();
         }
 
-        var user = maybeToken.get().getUser();
+        var user = maybeToken.get().getOwner();
 
         return TokenVerificationResponse.builder()
                 .verified(true)

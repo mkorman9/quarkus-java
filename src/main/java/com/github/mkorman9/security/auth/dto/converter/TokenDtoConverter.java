@@ -13,7 +13,7 @@ public class TokenDtoConverter {
     public TokenDto convertToDto(Token token) {
         return TokenDto.builder()
                 .token(token.getToken())
-                .user(userDtoConverter.convertToDto(token.getUser()))
+                .owner(userDtoConverter.convertToDto(token.getOwner()))
                 .issuedAt(token.getIssuedAt())
                 .remoteAddress(token.getRemoteAddress())
                 .device(token.getDevice())

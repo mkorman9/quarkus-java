@@ -10,7 +10,7 @@ import java.time.Instant;
 public class TokenDto {
     private String token;
 
-    private UserDto user;
+    private UserDto owner;
 
     private Instant issuedAt;
 
