@@ -57,8 +57,8 @@ public class TokenService {
                 .device(request.getDevice())
                 .isValid(true)
                 .build();
-
         entityManager.persist(token);
+
         return Optional.of(tokenDtoConverter.convertToDto(token));
     }
 
