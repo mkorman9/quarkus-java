@@ -32,7 +32,7 @@ public class User {
     @Id
     @Column(name = "id")
     @Builder.Default
-    private UUID id = UuidCreator.getTimeOrderedWithRandom();
+    private UUID id = UuidCreator.getTimeOrderedEpoch();
 
     @Column(name = "name", nullable = false)
     private String name;
