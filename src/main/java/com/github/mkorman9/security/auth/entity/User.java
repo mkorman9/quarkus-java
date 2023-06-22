@@ -1,10 +1,9 @@
 package com.github.mkorman9.security.auth.entity;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -31,9 +30,9 @@ public class User {
     public static final String CONSTRAINT_UNIQUE_NAME = "unique_users_name";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
-    private UUID id;
+    @Builder.Default
+    private UUID id = UuidCreator.getTimeOrderedWithRandom();
 
     @Column(name = "name", nullable = false)
     private String name;
